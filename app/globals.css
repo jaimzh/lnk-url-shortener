@@ -1,26 +1,39 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --bg-light: hsl(0, 0%, 10%);
+  --bg-base: hsl(0, 0%, 5%);
+  --bg-dark: hsl(0, 0%, 0%);
+
+  --text-base: hsl(0, 0%, 95%);
+  --text-muted: hsl(0, 0%, 70%);
+
+  --accent: #93032e;
+
+  --border: hsl(0, 0%, 30%);
 }
 
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --color-bg-light: var(--bg-light);
+  --color-bg-base: var(--bg-base);
+  --color-bg-dark: var(--bg-dark);
+  --color-text-base: var(--text-base);
+  --color-text-muted: var(--text-muted);
+  --color-accent: var(--accent);
+  --color-border: var(--border);
+  --font-sans: var(--font-ubuntu), sans-serif;
 }
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background-color: var(--bg-base);
+  color: var(--text-base);
+  min-height: 100vh;
+  font-family: var(--font-ubuntu), sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
