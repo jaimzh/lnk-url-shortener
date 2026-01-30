@@ -1,5 +1,6 @@
 # List of things TODO 
 
+- [ ] Maybe change the name to from lnk to stl(shorten that link)
 - [ ] Ensure only valid URLs are added to the database.
 - [ ] Create a helper to automatically attach http or https to links if the user forgets.
 - [ ] Make the dashboard table auto-update after a new link is created.

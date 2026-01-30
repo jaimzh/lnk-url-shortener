@@ -4,7 +4,7 @@ import React, { useState, useRef } from "react";
 import { motion } from "motion/react";
 import { Link2, ArrowRight, ClipboardPaste } from "lucide-react";
 import { useHeroContext } from "@/context/HeroContext";
-import LoadingModal from "./LoadingModal";
+import LoadingModal from "@/components/features/shortener/LoadingModal";
 import { readFromClipboard } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 

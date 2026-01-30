@@ -7,13 +7,13 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "./ui/table";
+} from "@/components/ui/table";
 import { CopyCell } from "./copy-cell";
-import { Button } from "./ui/button";
+import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { headers } from "next/headers";
 import { QrCode } from "lucide-react";
-import { QrCell } from "./qr-cell";
+import { QrCell } from "@/components/features/dashboard/qr-cell";
 
 const formatDate = (date: Date) => {
   return new Date(date).toLocaleDateString("en-US", {

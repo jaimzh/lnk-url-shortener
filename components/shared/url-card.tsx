@@ -57,7 +57,7 @@ export default function UrlCard({ result, onClose }: UrlCardProps) {
         <div className=" flex gap-2 items-center justify-center mb-2">
           <Check size={32} strokeWidth={3} />
           <h3 className="text-xl md:text-2xl font-semibold text-text-base">
-            Link Ready!
+            Lnk
           </h3>
         </div>
 

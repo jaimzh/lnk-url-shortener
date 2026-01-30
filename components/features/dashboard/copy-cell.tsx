@@ -4,7 +4,7 @@ import { Check, Copy, ExternalLink } from "lucide-react";
 import { useState } from "react";
 import { copyToClipboard } from "@/lib/utils";
 import Link from "next/link";
-import { Button } from "./ui/button";
+import { Button } from "../../ui/button";
 
 export function CopyCell({ text }: { text: string }) {
   const [copied, setCopied] = useState(false);
@@ -27,13 +27,13 @@ export function CopyCell({ text }: { text: string }) {
         className="text-text-base font-mono text-sm hover:underline truncate transition-colors"
         title={text}
       >
-        {text.replace(/^https?:\/\//, "")} {/* Optional: cleans up the UI by hiding http:// */}
+        {text.replace(/^https?:\/\//, "")}{" "}
+        {/* Optional: cleans up the UI by hiding http:// */}
       </Link>
 
       {/* The Copy Button */}
       <Button
         variant="ghost"
-      
         className="h-8 w-8 text-text-muted foreground"
         onClick={handleCopy}
       >

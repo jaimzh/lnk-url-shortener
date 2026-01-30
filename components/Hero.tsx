@@ -1,5 +1,5 @@
-import HeroAnimation from "./hero-animation";
-import UrlInput from "./url-input";
+import HeroAnimation from "./animations/hero-animation";
+import UrlInput from "./features/shortener/url-input";
 
 export default function Hero() {
   return (

@@ -3,7 +3,7 @@
 import { QrCode } from "lucide-react";
 import { useState } from "react";
 import { AnimatePresence, motion } from "motion/react";
-import UrlCard from "./url-card";
+import UrlCard from "./shared/url-card";
 
 interface QrCellProps {
   originalUrl: string;
@@ -49,6 +49,3 @@ export function QrCellx({ originalUrl, shortUrl }: QrCellProps) {
     </div>
   );
 }
-
-
-
