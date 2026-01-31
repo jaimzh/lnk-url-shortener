@@ -16,12 +16,16 @@ export default function Modal({ isOpen, onClose, children }: ModalProps) {
   useEffect(() => {
     setMounted(true);
     if (isOpen) {
+      // Prevent scrolling and hide scrollbar
       document.body.style.overflow = "hidden";
+      document.documentElement.style.overflow = "hidden";
     } else {
       document.body.style.overflow = "unset";
+      document.documentElement.style.overflow = "unset";
     }
     return () => {
       document.body.style.overflow = "unset";
+      document.documentElement.style.overflow = "unset";
     };
   }, [isOpen]);
 
@@ -30,31 +34,59 @@ export default function Modal({ isOpen, onClose, children }: ModalProps) {
   return createPortal(
     <AnimatePresence>
       {isOpen && (
-        <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4">
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.2 }}
-            onClick={onClose}
-            className="absolute inset-0 bg-bg-base/80 backdrop-blur-md"
-          />
-
-          <motion.div
-            initial={{ opacity: 0, scale: 0.9, y: 20 }}
-            animate={{ opacity: 1, scale: 1, y: 0 }}
-            exit={{ opacity: 0, scale: 0.9, y: 20 }}
-            transition={{
-              type: "spring",
-              damping: 30,
-              stiffness: 400,
-              opacity: { duration: 0.15 },
+        <>
+          <style
+            dangerouslySetInnerHTML={{
+              __html: `
+            .no-scrollbar::-webkit-scrollbar {
+              display: none;
+            }
+            .no-scrollbar {
+              -ms-overflow-style: none;
+              scrollbar-width: none;
+            }
+            body {
+              -ms-overflow-style: none;
+              scrollbar-width: none;
+              overflow: hidden !important;
+            }
+            body::-webkit-scrollbar {
+              display: none;
+            }
+            html {
+              overflow: hidden !important;
+            }
+          `,
             }}
-            className="relative z-[10000] w-full max-w-sm flex items-center justify-center"
-          >
-            {children}
-          </motion.div>
-        </div>
+          />
+          <div className="fixed inset-0 z-[9999] flex items-center justify-center overflow-y-auto no-scrollbar outline-none">
+            {/* Backdrop */}
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.2 }}
+              onClick={onClose}
+              className="fixed inset-0 bg-bg-base/80 backdrop-blur-md cursor-default pointer-events-auto"
+            />
+
+            {/* Content Wrapper */}
+            <motion.div
+              initial={{ opacity: 0, scale: 0.9, y: 20 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.9, y: 20 }}
+              transition={{
+                type: "spring",
+                damping: 30,
+                stiffness: 400,
+                opacity: { duration: 0.15 },
+              }}
+              className="relative z-[10000] w-full max-w-sm flex items-center justify-center pointer-events-auto my-auto p-4"
+            >
+              {children}
+            </motion.div>
+          </div>
+        </>
       )}
     </AnimatePresence>,
     document.body,

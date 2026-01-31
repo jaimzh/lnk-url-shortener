@@ -36,7 +36,7 @@ export const ALIAS_STRATEGIES = {
 export const RANDOM_FLAVORS = [
   { id: "text", label: "Text" },
   { id: "emoji", label: "Emoji" },
-  { id: "kaomoji", label: "Kao" },
+  { id: "kaomoji", label: "Kaomoji" },
   { id: "mix", label: "Mix" },
 ] as const;
 
