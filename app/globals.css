@@ -4,14 +4,14 @@
 @layer base {
   :root {
     /* My Custom Colors */
-    --custom-bg-light: hsl(0, 0%, 10%);
-    --custom-bg-base: hsl(0, 0%, 5%);
-    --custom-bg-dark: hsl(0, 0%, 0%);
+    --custom-bg-light: hsl(0, 0%, 15%);
+    --custom-bg-base: hsl(0, 0%, 10%);
+    --custom-bg-dark: hsl(0, 0%, 5%);
 
     --custom-text-base: hsl(0, 0%, 95%);
     --custom-text-muted: hsl(0, 0%, 70%);
 
-    --custom-accent: hsl(257, 96%, 29%);
+    --custom-accent: hwb(262 0% 20%);
     --custom-border: hsl(0, 0%, 20%);
 
     /* Mapping to Shadcn/UI Variables */

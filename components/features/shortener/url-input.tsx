@@ -8,9 +8,18 @@ import LoadingModal from "@/components/features/shortener/LoadingModal";
 import { readFromClipboard, cn } from "@/lib/utils";
 import { ShortenButton } from "@/components/ui/shorten-button";
 import { urlSchema } from "@/schemas/url";
-import { AdvancedOptions } from "./advanced-options";
+import { AdvancedOptions } from "@/components/features/shortener/advanced-options";
+import {
+  ALIAS_STRATEGIES,
+  AliasStrategy,
+  RandomFlavor,
+} from "@/components/features/shortener/advanced-options/constants";
+import { generateRandomAlias } from "@/components/features/shortener/advanced-options/utils";
+
+import { useRouter } from "next/navigation";
 
 export default function UrlInput() {
+  const router = useRouter();
   const { isHeroShortened, setIsHeroShortened } = useHeroContext();
 
   const [url, setUrl] = useState("");
@@ -21,10 +30,31 @@ export default function UrlInput() {
     shortUrl: string;
   } | null>(null);
 
+  // Advanced options state
   const [showAdvanced, setShowAdvanced] = useState(false);
-  const [aliasType, setAliasType] = useState("random"); // random, custom
+  const [aliasType, setAliasType] = useState<AliasStrategy>(
+    ALIAS_STRATEGIES.RANDOM,
+  );
   const [customAlias, setCustomAlias] = useState("");
-  const [randomFlavor, setRandomFlavor] = useState("text"); // text, emoji, kaomoji, mix
+  const [randomFlavor, setRandomFlavor] = useState<RandomFlavor>("text");
+  const [randomPreview, setRandomPreview] = useState("");
+
+  const handleRegenerateRandom = () => {
+    setRandomPreview(generateRandomAlias(randomFlavor));
+  };
+
+  React.useEffect(() => {
+    if (aliasType === ALIAS_STRATEGIES.RANDOM) {
+      handleRegenerateRandom();
+    }
+  }, [aliasType, randomFlavor]);
+  const getAliasToSend = () => {
+    if (aliasType === ALIAS_STRATEGIES.CUSTOM && customAlias.trim() !== "") {
+      return customAlias.trim();
+    }
+    // Use the previewed random alias if valid, otherwise generate a fresh one (fallback)
+    return randomPreview || generateRandomAlias(randomFlavor);
+  };
 
   const inputRef = useRef<HTMLInputElement>(null);
 
@@ -33,59 +63,12 @@ export default function UrlInput() {
     setError(null);
 
     const trimmed = url.trim();
-
-    // Determine the alias to send
-    let aliasToSend = "";
-    if (aliasType === "custom" && customAlias.trim()) {
-      aliasToSend = customAlias.trim();
-    } else if (aliasType === "random" && randomFlavor !== "text") {
-      // For special random flavors, generate them on the frontend
-      const EMOJIS = [
-        "🔥",
-        "🚀",
-        "💀",
-        "✨",
-        "🌈",
-        "🍦",
-        "⚡",
-        "💎",
-        "🦄",
-        "🍀",
-        "🍕",
-        "🎮",
-      ];
-      const KAOMOJIS = [
-        "( ͡° ͜ʖ ͡°)",
-        "(¬‿¬)",
-        "(ʘ‿ʘ)",
-        "(ง •̀_•́)ง",
-        "(╯°□°）╯︵ ┻━┻",
-        "(✿◕‿◕)",
-        "(⌐■_■)",
-        "(◕‿◕✿)",
-        "(╥﹏╥)",
-        "༼ つ ◕_◕ ༽つ",
-      ];
-      const chars = "abcdefghijklmnopqrstuvwxyz0123456789";
-
-      if (randomFlavor === "emoji") {
-        aliasToSend = Array.from(
-          { length: 3 },
-          () => EMOJIS[Math.floor(Math.random() * EMOJIS.length)],
-        ).join("");
-      } else if (randomFlavor === "kaomoji") {
-        aliasToSend = KAOMOJIS[Math.floor(Math.random() * KAOMOJIS.length)];
-      } else if (randomFlavor === "mix") {
-        const rChar = chars[Math.floor(Math.random() * chars.length)];
-        const rEmoji = EMOJIS[Math.floor(Math.random() * EMOJIS.length)];
-        aliasToSend = `${rChar}${rEmoji}${chars[Math.floor(Math.random() * chars.length)]}`;
-      }
-    }
+    const alias = getAliasToSend();
 
     // Validate with Zod before doing anything else
     const validation = urlSchema.safeParse({
       url: trimmed,
-      alias: aliasToSend,
+      alias: alias,
     });
 
     if (!validation.success) {
@@ -117,9 +100,14 @@ export default function UrlInput() {
       await new Promise((resolve) => setTimeout(resolve, 600));
 
       setResult(data);
+      router.refresh(); // Refresh Server Components (Dashboard Table)
       setIsLoading(false);
       setUrl("");
       setCustomAlias("");
+      setRandomFlavor("text");
+      setAliasType("random");
+      // Regenerate immediately for the next usage
+      setRandomPreview(generateRandomAlias("text"));
     } catch (error: any) {
       console.error("Failed to shorten URL:", error);
       setError(error.message || "An unexpected error occurred");
@@ -216,6 +204,8 @@ export default function UrlInput() {
           setCustomAlias={setCustomAlias}
           randomFlavor={randomFlavor}
           setRandomFlavor={setRandomFlavor}
+          randomPreview={randomPreview}
+          onRegenerate={handleRegenerateRandom}
         />
 
         {error && (

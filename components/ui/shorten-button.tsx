@@ -19,7 +19,7 @@ export function ShortenButton({
     <button
       disabled={disabled || isLoading}
       className={cn(
-        "relative group flex items-center justify-center gap-2 px-2 md:px-6 py-3 rounded-full overflow-hidden transition-all duration-200 ease-out active:scale-95 disabled:opacity-80 disabled:cursor-not-allowed",
+        "relative group flex items-center justify-center gap-2 px-2 md:px-6 py-3 rounded-full overflow-hidden transition-all duration-200 ease-out active:scale-95",
         "bg-accent text-text-base font-semibold",
         "border-t border-white/20",
         "shadow-[inset_0_1px_2px_rgba(255,255,255,0.3)]",

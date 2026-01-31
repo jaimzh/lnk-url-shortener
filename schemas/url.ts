@@ -17,7 +17,7 @@ export const urlSchema = z.object({
   alias: z
     .string()
     .trim()
-    .max(30, "Alias must be less than 30 characters")
+    .max(50, "Alias must be less than 50 characters") // Increased for long Kaomojis
     .optional()
     .or(z.literal("")),
 });

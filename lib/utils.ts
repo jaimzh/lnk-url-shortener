@@ -24,3 +24,10 @@ export async function copyToClipboard(text: string): Promise<boolean> {
     return false;
   }
 }
+
+export function getDisplayDomain() {
+  // if (typeof window !== "undefined") {
+  //   return window.location.host;
+  // }
+  return "lnk.li"; // Default fallback for server-side
+}

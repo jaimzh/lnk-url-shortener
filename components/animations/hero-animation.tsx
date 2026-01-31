@@ -36,7 +36,7 @@ export default function HeroAnimation() {
               exit={{ opacity: 0 }}
               className="text-text-muted/60 text-sm md:text-base font-light tracking-wide max-w-lg leading-relaxed mt-3"
             >
-             Turn long URLs into short, shareable links in seconds.
+              Turn long URLs into short, shareable links in seconds.
             </motion.p>
           ) : (
             <motion.p
@@ -110,12 +110,12 @@ export default function HeroAnimation() {
 
         .ambient-glow {
           position: absolute;
-          width: 140%;
-          height: 140%;
+          width: 180%;
+          height: 180%;
           background: radial-gradient(circle at center, var(--accent) 0%, transparent 70%);
-          filter: blur(80px);
+          filter: blur(100px);
           border-radius: 50%;
-          opacity: 30;
+          opacity: 0.6;
           transform: scale(0.9);
           transition: opacity 1.2s cubic-bezier(0.4, 0, 0.2, 1), transform 1.2s cubic-bezier(0.4, 0, 0.2, 1);
           pointer-events: none;
@@ -123,7 +123,7 @@ export default function HeroAnimation() {
         }
 
         .shortened .ambient-glow {
-          opacity: 0.9;
+          opacity: 0.5;
           transform: scale(1);
         }
 

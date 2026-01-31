@@ -2,21 +2,17 @@ import dbConnect from "@/lib/db";
 import { NextRequest } from "next/server";
 import { nanoid } from "nanoid";
 import { Url } from "@/models/UrlSchema";
-import { headers } from "next/headers";
 import { urlSchema } from "@/schemas/url";
 
-export async function POST(request: NextRequest) {
-  const headerList = await headers();
-  const host = headerList.get("host");
-  const protocol = process.env.NODE_ENV === "development" ? "http" : "https";
+import { getBaseUrl } from "@/lib/server-utils";
 
-  const baseUrl = `${protocol}://${host}`;
+export async function POST(request: NextRequest) {
+  const baseUrl = await getBaseUrl();
 
   try {
     await dbConnect();
     const body = await request.json();
 
-    // Validate with Zod
     const validation = urlSchema.safeParse(body);
 
     if (!validation.success) {

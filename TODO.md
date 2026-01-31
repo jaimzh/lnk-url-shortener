@@ -1,4 +1,4 @@
-# List of things TODO 
+# List of things TODO
 
 - [ ] Maybe change the name to from lnk to stl(shorten that link)
 - [ ] Ensure only valid URLs are added to the database.
@@ -9,6 +9,7 @@
 - [ ] Add a "How It Works" page with an icon in the navigation.
 - [ ] Add a loading state or preload page for better performance.
 - [ ] Verify headers, host, and port settings before pushing to production.
-- [ ] Add a visual separator between the input section and the dashboard table.
+- [x] Add a visual separator between the input section and the dashboard table.
 - [x] Refine button and table styling for a glassmorphism look.
 - [x] Add copyright info to the footer.
+- [ ] add a cache system so that it can remember that each time an alias is clicked or a timebased thing is clicked it will remember that and not allow it to be clicked again
