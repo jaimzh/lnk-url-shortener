@@ -12,19 +12,8 @@ export const EMOJIS = [
   "🍕",
   "🎮",
 ];
-
-export const KAOMOJIS = [
-  "( ͡° ͜ʖ ͡°)",
-  "(¬‿¬)",
-  "(ʘ‿ʘ)",
-  "(ง •̀_•́)ง",
-  "(╯°□°）╯︵ ┻━┻",
-  "(✿◕‿◕)",
-  "(⌐■_■)",
-  "(◕‿◕✿)",
-  "(╥﹏╥)",
-  "༼ つ ◕_◕ ༽つ",
-];
+import { KAOMOJIS } from "@/data/kaomojis";
+export { KAOMOJIS };
 
 export const CHARS = "abcdefghijklmnopqrstuvwxyz0123456789";
 

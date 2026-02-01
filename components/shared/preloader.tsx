@@ -52,7 +52,7 @@ export default function Preloader() {
                 transition={{ duration: 0.6, delay: 0.2 }}
                 className="text-6xl md:text-8xl font-bold tracking-tighter text-text-base select-none"
               >
-                L
+                l
               </motion.span>
               <motion.span
                 initial={{ y: 20, opacity: 0 }}
@@ -60,7 +60,7 @@ export default function Preloader() {
                 transition={{ duration: 0.6, delay: 0.3 }}
                 className="text-6xl md:text-8xl font-bold tracking-tighter text-text-base select-none"
               >
-                N
+                n
               </motion.span>
               <motion.span
                 initial={{ y: 20, opacity: 0 }}
@@ -68,7 +68,7 @@ export default function Preloader() {
                 transition={{ duration: 0.6, delay: 0.4 }}
                 className="text-6xl md:text-8xl font-bold tracking-tighter text-text-base select-none"
               >
-                K
+                k
               </motion.span>
               <motion.div
                 initial={{ scale: 0, opacity: 0 }}
