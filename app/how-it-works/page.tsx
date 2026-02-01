@@ -8,7 +8,7 @@ export default async function HowItWorks() {
   
   
   
-  const filePath = path.join(process.cwd(),"HOW_IT_WORKS.md");
+  const filePath = path.join(process.cwd(),"MY_THOUGHTS.md");
   const markdown = await fs.readFile(filePath, "utf-8");
   return (
     <main className="min-h-screen py-20 px-6 max-w-4xl mx-auto">
