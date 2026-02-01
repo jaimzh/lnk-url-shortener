@@ -51,7 +51,7 @@ export async function DashboardTable(props: DashboardTableProps) {
 
   return (
     <div id="dashboard-table" className="w-full flex justify-center py-6">
-      <div className="w-full max-w-4xl rounded-xl border border-border/40 overflow-hidden bg-bg-base/40 backdrop-blur-md shadow-xl ring-1 ring-white/5">
+      <div className="w-full max-w-4xl rounded-xl border border-accent/50 overflow-hidden bg-bg-base/40 backdrop-blur-md shadow-xl ring-1 ring-white/5">
         <Table className="w-full">
           <TableHeader>
             <TableRow className="hover:bg-transparent border-b border-white/5">

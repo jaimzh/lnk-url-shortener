@@ -207,7 +207,6 @@ export default function UrlInput() {
           randomPreview={randomPreview}
           onRegenerate={handleRegenerateRandom}
         />
-
         {error && (
           <motion.p
             initial={{ opacity: 0, y: -10 }}

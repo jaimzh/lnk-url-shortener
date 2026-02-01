@@ -5,6 +5,10 @@ export const urlSchema = z.object({
     .string()
     .trim()
     .min(1, "URL is required")
+    .regex(
+      /^(https?:\/\/)?([\w.-]+\.[a-z]{2,})(\/.*)?$/i,
+      "Please enter a valid link (e.g., google.com or https://example.com)",
+    )
     .transform((url) => {
       if (!/^https?:\/\//i.test(url)) {
         return `https://${url}`;
@@ -17,7 +21,7 @@ export const urlSchema = z.object({
   alias: z
     .string()
     .trim()
-    .max(50, "Alias must be less than 50 characters") // Increased for long Kaomojis
+    .max(50, "Alias must be less than 50 characters")
     .optional()
     .or(z.literal("")),
 });
