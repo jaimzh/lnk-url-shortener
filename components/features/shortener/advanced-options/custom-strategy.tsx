@@ -40,7 +40,10 @@ export const CustomStrategy = ({
           <input
             type="text"
             value={customAlias}
-            onChange={(e) => setCustomAlias(e.target.value)}
+            onChange={(e) => {
+              const val = e.target.value.replace(/\s+/g, "-");
+              setCustomAlias(val);
+            }}
             placeholder="your-custom-alias"
             className="bg-transparent outline-none w-full text-text-base font-mono text-lg font-bold placeholder:font-normal placeholder:text-text-muted/20"
             autoFocus

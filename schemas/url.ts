@@ -22,6 +22,7 @@ export const urlSchema = z.object({
     .string()
     .trim()
     .max(50, "Alias must be less than 50 characters")
+    .transform((val) => val.replace(/\s+/g, "-"))
     .optional()
     .or(z.literal("")),
 });
