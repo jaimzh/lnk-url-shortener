@@ -67,7 +67,7 @@ export default function HowItWorksClient({
             }`}
           >
             <Binary size={16} />
-            Technical Docs
+            My Docs
           </button>
         </div>
       </div>

@@ -70,16 +70,14 @@ export default function BrownianParticles() {
         if (this.y > canvas.height + 10) this.y = -10;
       }
 
-      draw() {
-        const localCtx = ctx;
-        if (!localCtx) return;
-        localCtx.save();
-        localCtx.globalAlpha = this.alpha;
-        localCtx.beginPath();
-        localCtx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
-        localCtx.fillStyle = "rgba(255, 255, 245, 1)";
-        localCtx.fill();
-        localCtx.restore();
+      draw(ctx: CanvasRenderingContext2D) {
+        ctx.save();
+        ctx.globalAlpha = this.alpha;
+        ctx.beginPath();
+        ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
+        ctx.fillStyle = "rgba(255, 255, 245, 1)";
+        ctx.fill();
+        ctx.restore();
       }
     }
 
@@ -113,7 +111,7 @@ export default function BrownianParticles() {
       ctx.clearRect(0, 0, canvas.width, canvas.height);
       for (let i = 0; i < particles.length; i++) {
         particles[i].update();
-        particles[i].draw();
+        particles[i].draw(ctx);
       }
       animationFrameId = requestAnimationFrame(animate);
     };
