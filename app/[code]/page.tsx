@@ -9,7 +9,8 @@ export default async function Page({
 }) {
   await dbConnect();
 
-  const { code } = await params;
+  const { code: rawCode } = await params;
+  const code = decodeURIComponent(rawCode);
 
   const urlEntry = await Url.findOneAndUpdate(
     { shortCode: code },
