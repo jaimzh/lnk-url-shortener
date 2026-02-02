@@ -2,7 +2,7 @@
 
 import React, { useState, useRef } from "react";
 import { motion } from "motion/react";
-import { ClipboardPaste } from "lucide-react";
+import { Clipboard } from "lucide-react";
 import { useHeroContext } from "@/context/HeroContext";
 import LoadingModal from "@/components/features/shortener/loading-modal";
 import { readFromClipboard, cn } from "@/lib/utils";
@@ -30,7 +30,7 @@ export default function UrlInput() {
     shortUrl: string;
   } | null>(null);
 
-  // Advanced options state
+
   const [showAdvanced, setShowAdvanced] = useState(false);
   const [aliasType, setAliasType] = useState<AliasStrategy>(
     ALIAS_STRATEGIES.RANDOM,
@@ -52,7 +52,7 @@ export default function UrlInput() {
     if (aliasType === ALIAS_STRATEGIES.CUSTOM && customAlias.trim() !== "") {
       return customAlias.trim();
     }
-    // Use the previewed random alias if valid, otherwise generate a fresh one (fallback)
+    
     return randomPreview || generateRandomAlias(randomFlavor);
   };
 
@@ -65,7 +65,7 @@ export default function UrlInput() {
     const trimmed = url.trim();
     const alias = getAliasToSend();
 
-    // Validate with Zod before doing anything else
+   
     const validation = urlSchema.safeParse({
       url: trimmed,
       alias: alias,
@@ -100,13 +100,13 @@ export default function UrlInput() {
       await new Promise((resolve) => setTimeout(resolve, 600));
 
       setResult(data);
-      router.refresh(); // Refresh Server Components (Dashboard Table)
+      router.refresh(); 
       setIsLoading(false);
       setUrl("");
       setCustomAlias("");
       setRandomFlavor("text");
       setAliasType("random");
-      // Regenerate immediately for the next usage
+    
       setRandomPreview(generateRandomAlias("text"));
     } catch (error: any) {
       console.error("Failed to shorten URL:", error);
@@ -165,7 +165,7 @@ export default function UrlInput() {
                 className="shrink-0 text-text-muted hover:text-accent transition-colors p-1 cursor-pointer"
                 title="Paste from clipboard"
               >
-                <ClipboardPaste
+                <Clipboard
                   size={18}
                   strokeWidth={1.5}
                   className="md:w-5 md:h-5"
