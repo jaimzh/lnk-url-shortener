@@ -2,7 +2,7 @@
 
 Haha, I was once like you. I thought URL shortening was some form of dark magic or straight-up sorcery. But once you peel back the curtain, it’s actually pretty simple.
 
-At a high level, it's just **mapping strings to specific addresses** stored in a database. Here is how we break it down step-by-step.
+At a high level, it's just **mapping strings to specific addresses** stored in a database. Here is how we(me, myself, and I) break it down step-by-step.
 
 ---
 
@@ -85,4 +85,4 @@ if (destination) {
 2. **Store both** in a database so they're "married."
 3. **Search & Redirect:** When someone uses the nickname, find the partner and open it.
 
-No sorcery, just a really organized filing system! 🚀
+So yeahhh that's the basic summary of how it works, still some extra things like decoding raw emoji strings and such, but yup, that's pretty much it for now. 
