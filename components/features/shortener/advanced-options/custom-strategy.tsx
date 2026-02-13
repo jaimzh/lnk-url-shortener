@@ -45,7 +45,7 @@ export const CustomStrategy = ({
               setCustomAlias(val);
             }}
             placeholder="your-custom-alias"
-            className="bg-transparent outline-none w-full text-text-base font-mono text-lg font-bold placeholder:font-normal placeholder:text-text-muted/20"
+            className="bg-transparent outline-none w-full text-text-base font-mono text-base md:text-lg font-bold placeholder:font-normal placeholder:text-text-muted/20"
             autoFocus
           />
 

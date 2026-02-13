@@ -30,7 +30,6 @@ export default function UrlInput() {
     shortUrl: string;
   } | null>(null);
 
-
   const [showAdvanced, setShowAdvanced] = useState(false);
   const [aliasType, setAliasType] = useState<AliasStrategy>(
     ALIAS_STRATEGIES.RANDOM,
@@ -52,7 +51,7 @@ export default function UrlInput() {
     if (aliasType === ALIAS_STRATEGIES.CUSTOM && customAlias.trim() !== "") {
       return customAlias.trim();
     }
-    
+
     return randomPreview || generateRandomAlias(randomFlavor);
   };
 
@@ -65,7 +64,6 @@ export default function UrlInput() {
     const trimmed = url.trim();
     const alias = getAliasToSend();
 
-   
     const validation = urlSchema.safeParse({
       url: trimmed,
       alias: alias,
@@ -100,13 +98,13 @@ export default function UrlInput() {
       await new Promise((resolve) => setTimeout(resolve, 600));
 
       setResult(data);
-      router.refresh(); 
+      router.refresh();
       setIsLoading(false);
       setUrl("");
       setCustomAlias("");
       setRandomFlavor("text");
       setAliasType("random");
-    
+
       setRandomPreview(generateRandomAlias("text"));
     } catch (error: any) {
       console.error("Failed to shorten URL:", error);
@@ -181,8 +179,8 @@ export default function UrlInput() {
                   setUrl(e.target.value);
                   if (error) setError(null);
                 }}
-                placeholder="Drop your long link here..."
-                className="w-full bg-transparent text-text-base placeholder:text-text-muted/20 outline-none text-base md:text-base font-light tracking-wide py-1 caret-accent"
+                placeholder="Drop long link here..."
+                className="w-full bg-transparent text-text-base placeholder:text-text-muted/20 outline-none text-sm md:text-base font-light tracking-wide py-1 caret-accent"
               />
             </div>
 
