@@ -12,7 +12,7 @@ const ubuntu = Ubuntu({
 });
 
 export const metadata: Metadata = {
-  title: "LNNK — Shorten the long",
+  title: "LNNK - Shorten the long",
   description: "Turn long URLs into short, shareable links.",
   icons: {
     icon: "/favicon.ico",
