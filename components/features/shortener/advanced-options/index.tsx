@@ -125,7 +125,11 @@ export function AdvancedOptions({
                     </AnimatePresence>
                   </div>
 
-                  <div className="flex items-center justify-center gap-10 pt-4">
+
+<div className="h-px w-full bg-linear-to-r from-transparent via-white/5 to-transparent my-2" />
+
+
+                  <div className="flex flex-col md:flex-row items-center justify-center gap-6 md:gap-12 pt-4">
                     {[
                       { id: "public", icon: Globe, label: "Public" },
                       { id: "private", icon: Lock, label: "Private" },
@@ -136,7 +140,7 @@ export function AdvancedOptions({
                         onClick={() =>
                           setVisibility(option.id as "public" | "private")
                         }
-                        className="group flex items-center gap-4 cursor-pointer outline-none"
+                        className="group flex items-center gap-3 cursor-pointer outline-none w-24 md:w-auto"
                       >
                         <div
                           className={cn(
