@@ -19,6 +19,28 @@ export const metadata: Metadata = {
     shortcut: "/favicon.ico",
     apple: "/apple-touch-icon.png",
   },
+  openGraph: {
+    title: "LNNK - Shorten the long",
+    description: "Turn long URLs into short, shareable links.",
+    url: "https://lnnk.click",
+    siteName: "LNNK",
+    images: [
+      {
+        url: "https://lnnk.click/lnnk-wide.png",
+        width: 1200,
+        height: 630,
+        alt: "LNNK - Link Shortener",
+      },
+    ],
+    locale: "en_US",
+    type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "LNNK - Shorten the long",
+    description: "Turn long URLs into short, shareable links.",
+    images: ["https://lnnk.click/lnnk-wide.png"],
+  },
 };
 
 export default function RootLayout({

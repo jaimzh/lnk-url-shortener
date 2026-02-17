@@ -19,24 +19,30 @@ export async function generateMetadata({
 
   if (!urlEntry || !urlEntry.brandingTitle) return {};
 
+  const imageUrl = urlEntry.brandingImage || DEFAULT_PREVIEW_IMAGE;
+
   return {
     title: urlEntry.brandingTitle || undefined,
     description: urlEntry.brandingDescription || undefined,
     openGraph: {
       title: urlEntry.brandingTitle || undefined,
       description: urlEntry.brandingDescription || undefined,
-      images: urlEntry.brandingImage
-        ? [urlEntry.brandingImage]
-        : [DEFAULT_PREVIEW_IMAGE],
+      url: `https://lnnk.click/${code}`,
+      siteName: "LNNK",
+      images: [
+        {
+          url: imageUrl,
+          width: imageUrl === DEFAULT_PREVIEW_IMAGE ? 1200 : undefined,
+          height: imageUrl === DEFAULT_PREVIEW_IMAGE ? 630 : undefined,
+        },
+      ],
       type: "website",
     },
     twitter: {
       card: "summary_large_image",
       title: urlEntry.brandingTitle || undefined,
       description: urlEntry.brandingDescription || undefined,
-      images: urlEntry.brandingImage
-        ? [urlEntry.brandingImage]
-        : [DEFAULT_PREVIEW_IMAGE],
+      images: [imageUrl],
     },
   };
 }
