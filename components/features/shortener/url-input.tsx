@@ -1,8 +1,9 @@
-﻿"use client";
+"use client";
 
 import React, { useCallback, useRef, useState } from "react";
-import { motion } from "motion/react";
-import { Clipboard, FileImage, ImagePlus, X } from "lucide-react";
+import { createPortal } from "react-dom";
+import { AnimatePresence, motion } from "motion/react";
+import { Clipboard, FileImage, FileText, ImagePlus, X } from "lucide-react";
 import { useHeroContext } from "@/context/HeroContext";
 import LoadingModal from "@/components/features/shortener/loading-modal";
 import { readFromClipboard, cn } from "@/lib/utils";
@@ -40,6 +41,7 @@ type CdnAssetInputProps = InputAreaProps & {
   assetPreview: AssetPreview | null;
   onAssetSelect: (file: File) => void;
   onAssetClear: () => void;
+  onPreviewOpen: () => void;
 };
 
 function formatFileSize(size: number) {
@@ -93,6 +95,7 @@ function CdnAssetInput({
   assetPreview,
   onAssetSelect,
   onAssetClear,
+  onPreviewOpen,
   onFocus,
   onPaste,
   onUrlChange,
@@ -100,9 +103,29 @@ function CdnAssetInput({
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [isDragging, setIsDragging] = useState(false);
 
+  const displayValue = url.replace(/\r\n|\r|\n/g, " ");
+  const hasPreview = Boolean(url.trim() || assetPreview);
+
   const handleFile = (file: File | undefined) => {
     if (!file) return;
     onAssetSelect(file);
+  };
+
+  const handleAssetButtonClick = () => {
+    if (hasPreview) {
+      onPreviewOpen();
+      return;
+    }
+
+    fileInputRef.current?.click();
+  };
+
+  const handleTextPaste = (event: React.ClipboardEvent<HTMLInputElement>) => {
+    const pastedText = event.clipboardData.getData("text");
+    if (!pastedText) return;
+
+    event.preventDefault();
+    onUrlChange(pastedText);
   };
 
   const handleDrop = (event: React.DragEvent<HTMLDivElement>) => {
@@ -163,9 +186,9 @@ function CdnAssetInput({
       {assetPreview?.previewUrl ? (
         <button
           type="button"
-          onClick={() => fileInputRef.current?.click()}
+          onClick={handleAssetButtonClick}
           className="h-9 w-9 shrink-0 overflow-hidden rounded-full border border-[color:var(--shortener-accent-border-soft)] bg-bg-base/70"
-          title="Choose asset"
+          title="Preview asset"
         >
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
@@ -179,11 +202,15 @@ function CdnAssetInput({
           type="button"
           whileHover={{ scale: 1.06 }}
           whileTap={{ scale: 0.94 }}
-          onClick={() => fileInputRef.current?.click()}
+          onClick={handleAssetButtonClick}
           className="shrink-0 text-text-muted hover:text-[color:var(--shortener-accent)] transition-colors p-1 cursor-pointer"
-          title="Choose asset"
+          title={hasPreview ? "Preview content" : "Choose asset"}
         >
-          <ImagePlus size={18} strokeWidth={1.5} className="md:w-5 md:h-5" />
+          {hasPreview ? (
+            <FileText size={18} strokeWidth={1.5} className="md:w-5 md:h-5" />
+          ) : (
+            <ImagePlus size={18} strokeWidth={1.5} className="md:w-5 md:h-5" />
+          )}
         </motion.button>
       )}
 
@@ -204,8 +231,9 @@ function CdnAssetInput({
           <input
             ref={inputRef}
             type="text"
-            value={url}
+            value={displayValue}
             onFocus={onFocus}
+            onPaste={handleTextPaste}
             onChange={(event) => onUrlChange(event.target.value)}
             placeholder="Drop asset URL or image here..."
             className={cn(
@@ -240,6 +268,114 @@ function CdnAssetInput({
   );
 }
 
+
+type CdnPreviewModalProps = {
+  isOpen: boolean;
+  text: string;
+  assetPreview: AssetPreview | null;
+  onClose: () => void;
+};
+
+function CdnPreviewModal({
+  isOpen,
+  text,
+  assetPreview,
+  onClose,
+}: CdnPreviewModalProps) {
+  const previewText = text || "No text content to preview.";
+  const lineCount = previewText.split(/\r\n|\r|\n/).length;
+
+  React.useEffect(() => {
+    if (!isOpen) return;
+
+    const previousBodyOverflow = document.body.style.overflow;
+    const previousHtmlOverflow = document.documentElement.style.overflow;
+
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === "Escape") onClose();
+    };
+
+    document.body.style.overflow = "hidden";
+    document.documentElement.style.overflow = "hidden";
+    window.addEventListener("keydown", handleKeyDown);
+
+    return () => {
+      document.body.style.overflow = previousBodyOverflow;
+      document.documentElement.style.overflow = previousHtmlOverflow;
+      window.removeEventListener("keydown", handleKeyDown);
+    };
+  }, [isOpen, onClose]);
+
+  if (typeof document === "undefined") return null;
+
+  return createPortal(
+    <AnimatePresence>
+      {isOpen && (
+        <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4">
+          <motion.button
+            type="button"
+            aria-label="Close preview"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.18 }}
+            onClick={onClose}
+            className="absolute inset-0 bg-bg-base/85 backdrop-blur-md"
+          />
+
+          <motion.div
+            role="dialog"
+            aria-modal="true"
+            aria-label="CDN asset preview"
+            initial={{ opacity: 0, scale: 0.96, y: 12 }}
+            animate={{ opacity: 1, scale: 1, y: 0 }}
+            exit={{ opacity: 0, scale: 0.96, y: 12 }}
+            transition={{ type: "spring", bounce: 0.12, duration: 0.32 }}
+            className="relative z-10 flex max-h-[82vh] w-full max-w-4xl flex-col overflow-hidden rounded-2xl border border-[color:var(--shortener-accent-border)] bg-bg-base shadow-2xl"
+          >
+            <div className="flex items-center justify-between gap-4 border-b border-[color:var(--shortener-accent-border-soft)] px-4 py-3 md:px-5">
+              <div className="min-w-0 text-left">
+                <p className="truncate text-sm font-semibold text-text-base">
+                  {assetPreview?.name || "Text preview"}
+                </p>
+                <p className="text-xs text-text-muted/60">
+                  {assetPreview
+                    ? formatFileSize(assetPreview.size)
+                    : `${lineCount} ${lineCount === 1 ? "line" : "lines"}`}
+                </p>
+              </div>
+
+              <button
+                type="button"
+                onClick={onClose}
+                className="shrink-0 rounded-full p-2 text-text-muted/70 transition-colors hover:bg-[color:var(--shortener-accent-faint)] hover:text-text-base"
+                title="Close preview"
+              >
+                <X size={18} strokeWidth={1.8} />
+              </button>
+            </div>
+
+            <div className="min-h-0 flex-1 overflow-auto bg-black/20 p-4 text-left md:p-5">
+              {assetPreview?.previewUrl ? (
+                // eslint-disable-next-line @next/next/no-img-element
+                <img
+                  src={assetPreview.previewUrl}
+                  alt={assetPreview.name}
+                  className="mx-auto max-h-[62vh] max-w-full rounded-lg object-contain"
+                />
+              ) : (
+                <pre className="min-w-full overflow-visible whitespace-pre font-mono text-xs leading-6 text-text-base md:text-sm">
+                  {previewText}
+                </pre>
+              )}
+            </div>
+          </motion.div>
+        </div>
+      )}
+    </AnimatePresence>,
+    document.body,
+  );
+}
 export default function UrlInput() {
   const router = useRouter();
   const { setIsHeroShortened } = useHeroContext();
@@ -248,6 +384,7 @@ export default function UrlInput() {
 
   const [url, setUrl] = useState("");
   const [assetPreview, setAssetPreview] = useState<AssetPreview | null>(null);
+  const [isPreviewOpen, setIsPreviewOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [result, setResult] = useState<{
@@ -263,6 +400,8 @@ export default function UrlInput() {
   const [randomFlavor, setRandomFlavor] = useState<RandomFlavor>("text");
   const [randomPreview, setRandomPreview] = useState("");
   const [visibility, setVisibility] = useState<"public" | "private">("public");
+  const [cdnExpiresInSeconds, setCdnExpiresInSeconds] = useState<number | null>(null);
+  const [cdnCacheTtlSeconds, setCdnCacheTtlSeconds] = useState(24 * 60 * 60);
 
   // Branding part
   const [brandingTitle, setBrandingTitle] = useState("");
@@ -381,6 +520,8 @@ export default function UrlInput() {
       setRandomFlavor("text");
       setAliasType("random");
       setVisibility("public");
+      setCdnExpiresInSeconds(null);
+      setCdnCacheTtlSeconds(24 * 60 * 60);
       setBrandingTitle("");
       setBrandingDescription("");
       setBrandingImageUrl("");
@@ -410,6 +551,12 @@ export default function UrlInput() {
 
   return (
     <>
+      <CdnPreviewModal
+        isOpen={isPreviewOpen}
+        text={url}
+        assetPreview={assetPreview}
+        onClose={() => setIsPreviewOpen(false)}
+      />
       <LoadingModal
         isLoading={isLoading}
         result={result}
@@ -448,6 +595,7 @@ export default function UrlInput() {
                 onUrlChange={handleUrlChange}
                 onAssetSelect={handleAssetSelect}
                 onAssetClear={handleAssetClear}
+                onPreviewOpen={() => setIsPreviewOpen(true)}
               />
             ) : (
               <LinkUrlInput
@@ -493,6 +641,10 @@ export default function UrlInput() {
           setBrandingDescription={setBrandingDescription}
           brandingImageUrl={brandingImageUrl}
           setBrandingImageUrl={setBrandingImageUrl}
+          cdnExpiresInSeconds={cdnExpiresInSeconds}
+          setCdnExpiresInSeconds={setCdnExpiresInSeconds}
+          cdnCacheTtlSeconds={cdnCacheTtlSeconds}
+          setCdnCacheTtlSeconds={setCdnCacheTtlSeconds}
         />
         {error && (
           <motion.p

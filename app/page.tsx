@@ -14,13 +14,15 @@ export default function Home({
   return (
     <main className="min-h-screen flex flex-col items-center">
       <StructuredData />
-      <Navbar />
-      <ShortenerThemeProvider className="flex flex-1 flex-col items-center justify-center">
-        <Hero />
+      <ShortenerThemeProvider className="flex flex-1 w-full flex-col items-center">
+        <Navbar />
+        <div className="flex flex-1 w-full flex-col items-center justify-center">
+          <Hero />
 
-        <SectionSeparator label="Recent History" />
+          <SectionSeparator label="Recent History" />
 
-        <DashboardTable searchParams={searchParams} />
+          <DashboardTable searchParams={searchParams} />
+        </div>
       </ShortenerThemeProvider>
       <Footer />
     </main>

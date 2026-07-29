@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { motion } from "motion/react";
 import { RefreshCcw, Type, Smile, Hash, Zap } from "lucide-react";
 import { cn, getDisplayDomain } from "@/lib/utils";
@@ -9,6 +9,7 @@ interface RandomStrategyProps {
   setRandomFlavor: (flavor: RandomFlavor) => void;
   randomPreview: string;
   onRegenerate: () => void;
+  displayPrefix?: string;
 }
 
 const flavorIcons: Record<string, React.ReactNode> = {
@@ -23,12 +24,9 @@ export const RandomStrategy = ({
   setRandomFlavor,
   randomPreview,
   onRegenerate,
+  displayPrefix,
 }: RandomStrategyProps) => {
-  const [domain, setDomain] = useState("snappy.li");
-
-  useEffect(() => {
-    setDomain(getDisplayDomain());
-  }, []);
+  const [domain] = useState(() => getDisplayDomain());
 
   return (
     <motion.div
@@ -65,7 +63,7 @@ export const RandomStrategy = ({
         <div className="relative flex items-center justify-between bg-bg-base/60 backdrop-blur-sm px-4 sm:px-6 py-3 sm:py-4 rounded-xl border border-white/5 shadow-inner">
           <div className="flex items-center gap-1 overflow-hidden">
             <span className="text-text-muted/50 font-mono text-sm shrink-0">
-              {domain}/
+              {displayPrefix ?? `${domain}/`}
             </span>
             <motion.span
               key={randomPreview}

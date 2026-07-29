@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { motion } from "motion/react";
 import { X } from "lucide-react";
 import { cn, getDisplayDomain } from "@/lib/utils";
@@ -6,17 +6,17 @@ import { cn, getDisplayDomain } from "@/lib/utils";
 interface CustomStrategyProps {
   customAlias: string;
   setCustomAlias: (alias: string) => void;
+  displayPrefix?: string;
+  placeholder?: string;
 }
 
 export const CustomStrategy = ({
   customAlias,
   setCustomAlias,
+  displayPrefix,
+  placeholder = "custom-link",
 }: CustomStrategyProps) => {
-  const [domain, setDomain] = useState("snappy.li");
-
-  useEffect(() => {
-    setDomain(getDisplayDomain());
-  }, []);
+  const [domain] = useState(() => getDisplayDomain());
 
   const isValid =
     !customAlias ||
@@ -45,7 +45,7 @@ export const CustomStrategy = ({
           )}
         >
           <span className="text-text-muted/50 font-mono text-xs mr-1 select-none shrink-0 transition-colors group-focus-within:text-text-muted/70">
-            {domain}/
+            {displayPrefix ?? `${domain}/`}
           </span>
           <input
             type="text"
@@ -55,7 +55,7 @@ export const CustomStrategy = ({
               const val = e.target.value.replace(/\s+/g, "-");
               setCustomAlias(val);
             }}
-            placeholder="custom-link"
+            placeholder={placeholder}
             className="bg-transparent outline-none w-full text-text-base font-mono text-sm md:text-base font-bold placeholder:font-normal placeholder:text-text-muted/20"
             autoFocus
           />
