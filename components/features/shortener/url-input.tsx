@@ -1,8 +1,8 @@
-"use client";
+﻿"use client";
 
 import React, { useCallback, useRef, useState } from "react";
 import { motion } from "motion/react";
-import { Clipboard } from "lucide-react";
+import { Clipboard, FileImage, ImagePlus, X } from "lucide-react";
 import { useHeroContext } from "@/context/HeroContext";
 import LoadingModal from "@/components/features/shortener/loading-modal";
 import { readFromClipboard, cn } from "@/lib/utils";
@@ -21,6 +21,225 @@ import { useShortenerTheme } from "@/components/features/shortener/shortener-the
 
 import { useRouter } from "next/navigation";
 
+type AssetPreview = {
+  name: string;
+  size: number;
+  previewUrl: string | null;
+};
+
+type InputAreaProps = {
+  url: string;
+  error: string | null;
+  inputRef: React.RefObject<HTMLInputElement | null>;
+  onFocus: () => void;
+  onPaste: () => void;
+  onUrlChange: (value: string) => void;
+};
+
+type CdnAssetInputProps = InputAreaProps & {
+  assetPreview: AssetPreview | null;
+  onAssetSelect: (file: File) => void;
+  onAssetClear: () => void;
+};
+
+function formatFileSize(size: number) {
+  if (size < 1024) return `${size} B`;
+  if (size < 1024 * 1024) return `${(size / 1024).toFixed(1)} KB`;
+  return `${(size / (1024 * 1024)).toFixed(1)} MB`;
+}
+
+function LinkUrlInput({
+  url,
+  error,
+  inputRef,
+  onFocus,
+  onPaste,
+  onUrlChange,
+}: InputAreaProps) {
+  return (
+    <div className="flex items-center flex-1 pl-2 md:pl-3 pr-2 md:pr-4 gap-3 md:gap-4 min-w-0">
+      <motion.button
+        type="button"
+        whileHover={{ scale: 1.1 }}
+        whileTap={{ scale: 0.9 }}
+        onClick={onPaste}
+        className="shrink-0 text-text-muted hover:text-[color:var(--shortener-accent)] transition-colors p-1 cursor-pointer"
+        title="Paste from clipboard"
+      >
+        <Clipboard size={18} strokeWidth={1.5} className="md:w-5 md:h-5" />
+      </motion.button>
+
+      <input
+        ref={inputRef}
+        type="text"
+        value={url}
+        onFocus={onFocus}
+        onChange={(event) => onUrlChange(event.target.value)}
+        placeholder="Drop long link here..."
+        className={cn(
+          "w-full bg-transparent text-text-base placeholder:text-text-muted/20 outline-none text-sm md:text-base font-light tracking-wide py-1",
+          "caret-[color:var(--shortener-accent)]",
+        )}
+        aria-invalid={Boolean(error)}
+      />
+    </div>
+  );
+}
+
+function CdnAssetInput({
+  url,
+  error,
+  inputRef,
+  assetPreview,
+  onAssetSelect,
+  onAssetClear,
+  onFocus,
+  onPaste,
+  onUrlChange,
+}: CdnAssetInputProps) {
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const [isDragging, setIsDragging] = useState(false);
+
+  const handleFile = (file: File | undefined) => {
+    if (!file) return;
+    onAssetSelect(file);
+  };
+
+  const handleDrop = (event: React.DragEvent<HTMLDivElement>) => {
+    event.preventDefault();
+    setIsDragging(false);
+
+    const file = event.dataTransfer.files?.[0];
+    if (file) {
+      handleFile(file);
+      return;
+    }
+
+    const droppedText =
+      event.dataTransfer.getData("text/uri-list") ||
+      event.dataTransfer.getData("text/plain");
+
+    if (droppedText) {
+      onUrlChange(droppedText.trim());
+      inputRef.current?.focus();
+    }
+  };
+
+  const handleDragLeave = (event: React.DragEvent<HTMLDivElement>) => {
+    const relatedTarget = event.relatedTarget;
+    if (relatedTarget instanceof Node && event.currentTarget.contains(relatedTarget)) {
+      return;
+    }
+
+    setIsDragging(false);
+  };
+
+  return (
+    <div
+      onDragEnter={(event) => {
+        event.preventDefault();
+        setIsDragging(true);
+      }}
+      onDragOver={(event) => {
+        event.preventDefault();
+        setIsDragging(true);
+      }}
+      onDragLeave={handleDragLeave}
+      onDrop={handleDrop}
+      className={cn(
+        "flex items-center flex-1 pl-2 md:pl-3 pr-2 md:pr-4 gap-3 md:gap-4 min-w-0 rounded-full transition-colors",
+        isDragging &&
+          "bg-[color:var(--shortener-accent-faint)] ring-1 ring-inset ring-[color:var(--shortener-accent-border)]",
+      )}
+    >
+      <input
+        ref={fileInputRef}
+        type="file"
+        accept="image/*"
+        className="sr-only"
+        onChange={(event) => handleFile(event.target.files?.[0])}
+      />
+
+      {assetPreview?.previewUrl ? (
+        <button
+          type="button"
+          onClick={() => fileInputRef.current?.click()}
+          className="h-9 w-9 shrink-0 overflow-hidden rounded-full border border-[color:var(--shortener-accent-border-soft)] bg-bg-base/70"
+          title="Choose asset"
+        >
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src={assetPreview.previewUrl}
+            alt=""
+            className="h-full w-full object-cover"
+          />
+        </button>
+      ) : (
+        <motion.button
+          type="button"
+          whileHover={{ scale: 1.06 }}
+          whileTap={{ scale: 0.94 }}
+          onClick={() => fileInputRef.current?.click()}
+          className="shrink-0 text-text-muted hover:text-[color:var(--shortener-accent)] transition-colors p-1 cursor-pointer"
+          title="Choose asset"
+        >
+          <ImagePlus size={18} strokeWidth={1.5} className="md:w-5 md:h-5" />
+        </motion.button>
+      )}
+
+      <div className="grid flex-1 min-w-0 gap-0.5 text-left">
+        {assetPreview ? (
+          <div className="flex items-center  min-w-0 gap-2 text-sm text-text-base">
+            <FileImage
+              size={14}
+              strokeWidth={1.7}
+              className="shrink-0 text-[color:var(--shortener-accent)]"
+            />
+            <span className="truncate font-medium">{assetPreview.name}</span>
+            <span className="shrink-0 text-xs text-text-muted/50 mt-1">
+              {formatFileSize(assetPreview.size)}
+            </span>
+          </div>
+        ) : (
+          <input
+            ref={inputRef}
+            type="text"
+            value={url}
+            onFocus={onFocus}
+            onChange={(event) => onUrlChange(event.target.value)}
+            placeholder="Drop asset URL or image here..."
+            className={cn(
+              "w-full bg-transparent text-text-base placeholder:text-text-muted/20 outline-none text-sm md:text-base font-light tracking-wide py-1",
+              "caret-[color:var(--shortener-accent)]",
+            )}
+            aria-invalid={Boolean(error)}
+          />
+        )}
+      </div>
+
+      {assetPreview ? (
+        <button
+          type="button"
+          onClick={onAssetClear}
+          className="shrink-0 rounded-full p-1 text-text-muted/60 transition-colors hover:text-text-base"
+          title="Remove asset"
+        >
+          <X size={16} strokeWidth={1.7} />
+        </button>
+      ) : (
+        <button
+          type="button"
+          onClick={onPaste}
+          className="shrink-0 rounded-full p-1 text-text-muted/50 transition-colors hover:text-[color:var(--shortener-accent)]"
+          title="Paste asset URL"
+        >
+          <Clipboard size={16} strokeWidth={1.5} />
+        </button>
+      )}
+    </div>
+  );
+}
+
 export default function UrlInput() {
   const router = useRouter();
   const { setIsHeroShortened } = useHeroContext();
@@ -28,6 +247,7 @@ export default function UrlInput() {
     useShortenerTheme();
 
   const [url, setUrl] = useState("");
+  const [assetPreview, setAssetPreview] = useState<AssetPreview | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [result, setResult] = useState<{
@@ -67,6 +287,43 @@ export default function UrlInput() {
   };
 
   const inputRef = useRef<HTMLInputElement>(null);
+
+  React.useEffect(() => {
+    return () => {
+      if (assetPreview?.previewUrl) {
+        URL.revokeObjectURL(assetPreview.previewUrl);
+      }
+    };
+  }, [assetPreview]);
+
+  const handleUrlChange = (value: string) => {
+    setUrl(value);
+    if (assetPreview) setAssetPreview(null);
+    if (error) setError(null);
+  };
+
+  const handleAssetSelect = (file: File) => {
+    if (assetPreview?.previewUrl) {
+      URL.revokeObjectURL(assetPreview.previewUrl);
+    }
+
+    setUrl("");
+    setError(null);
+    setAssetPreview({
+      name: file.name,
+      size: file.size,
+      previewUrl: file.type.startsWith("image/") ? URL.createObjectURL(file) : null,
+    });
+  };
+
+  const handleAssetClear = () => {
+    if (assetPreview?.previewUrl) {
+      URL.revokeObjectURL(assetPreview.previewUrl);
+    }
+
+    setAssetPreview(null);
+    inputRef.current?.focus();
+  };
 
   const handleShorten = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -146,8 +403,7 @@ export default function UrlInput() {
   const handlePaste = async () => {
     const copiedText = await readFromClipboard();
     if (copiedText) {
-      setUrl(copiedText);
-      setError(null);
+      handleUrlChange(copiedText);
       inputRef.current?.focus();
     }
   };
@@ -181,42 +437,28 @@ export default function UrlInput() {
             onSubmit={handleShorten}
             className="flex items-center w-full h-full"
           >
-            <div className="flex items-center flex-1 pl-4 md:pl-6 pr-2 md:pr-4 gap-3 md:gap-4 min-w-0">
-              <motion.button
-                type="button"
-                whileHover={{ scale: 1.1 }}
-                whileTap={{ scale: 0.9 }}
-                onClick={handlePaste}
-                className="shrink-0 text-text-muted hover:text-[color:var(--shortener-accent)] transition-colors p-1 cursor-pointer"
-                title="Paste from clipboard"
-              >
-                <Clipboard
-                  size={18}
-                  strokeWidth={1.5}
-                  className="md:w-5 md:h-5"
-                />
-              </motion.button>
-
-              <input
-                ref={inputRef}
-                type="text"
-                value={url}
+            {shortenerMode === SHORTENER_MODES.CDN ? (
+              <CdnAssetInput
+                url={url}
+                error={error}
+                inputRef={inputRef}
+                assetPreview={assetPreview}
                 onFocus={() => setIsHeroShortened(true)}
-                onChange={(e) => {
-                  setUrl(e.target.value);
-                  if (error) setError(null);
-                }}
-                placeholder={
-                  shortenerMode === SHORTENER_MODES.CDN
-                    ? "Drop asset URL here..."
-                    : "Drop long link here..."
-                }
-                className={cn(
-                  "w-full bg-transparent text-text-base placeholder:text-text-muted/20 outline-none text-sm md:text-base font-light tracking-wide py-1",
-                  "caret-[color:var(--shortener-accent)]",
-                )}
+                onPaste={handlePaste}
+                onUrlChange={handleUrlChange}
+                onAssetSelect={handleAssetSelect}
+                onAssetClear={handleAssetClear}
               />
-            </div>
+            ) : (
+              <LinkUrlInput
+                url={url}
+                error={error}
+                inputRef={inputRef}
+                onFocus={() => setIsHeroShortened(true)}
+                onPaste={handlePaste}
+                onUrlChange={handleUrlChange}
+              />
+            )}
 
             <ShortenButton
               type="submit"
