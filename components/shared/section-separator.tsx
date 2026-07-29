@@ -14,13 +14,13 @@ export function SectionSeparator({ label, className }: SectionSeparatorProps) {
         className,
       )}
     >
-      <div className="h-[1px] flex-1 bg-gradient-to-r from-transparent via-primary/50 to-primary/50" />
+      <div className="h-[1px] flex-1 bg-[linear-gradient(to_right,transparent,var(--shortener-accent-border),var(--shortener-accent-border))]" />
       {label && (
         <span className="text-xl md:text-2xl font-bold tracking-tight text-text-muted">
           {label}
         </span>
       )}
-      <div className="h-[1px] flex-1 bg-gradient-to-l from-transparent via-primary/50 to-primary/50" />
+      <div className="h-[1px] flex-1 bg-[linear-gradient(to_left,transparent,var(--shortener-accent-border),var(--shortener-accent-border))]" />
     </div>
   );
 }

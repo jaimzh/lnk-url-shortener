@@ -1,10 +1,8 @@
 import React from "react";
-import { motion, AnimatePresence } from "motion/react";
 import {
   Type,
   AlignLeft,
   Image as ImageIcon,
-  ExternalLink,
   Sparkles,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -35,10 +33,10 @@ export const BrandingOptions = ({
       <div className="space-y-4">
         {/* Title Input */}
         <div className="relative group">
-          <div className="flex items-center gap-4 bg-bg-base/40 rounded-2xl border border-white/5 p-3.5 focus-within:border-accent/30 transition-all">
+          <div className="flex items-center gap-4 bg-bg-base/40 rounded-2xl border border-white/5 p-3.5 focus-within:border-[color:var(--shortener-accent-border-soft)] transition-all">
             <Type
               size={18}
-              className="text-text-muted/20 group-focus-within:text-accent transition-colors shrink-0"
+              className="text-text-muted/20 group-focus-within:text-[color:var(--shortener-accent)] transition-colors shrink-0"
             />
             <input
               type="text"
@@ -61,10 +59,10 @@ export const BrandingOptions = ({
 
         {/* Description Input */}
         <div className="relative group">
-          <div className="flex items-start gap-4 bg-bg-base/40 rounded-2xl border border-white/5 p-3.5 focus-within:border-accent/30 transition-all">
+          <div className="flex items-start gap-4 bg-bg-base/40 rounded-2xl border border-white/5 p-3.5 focus-within:border-[color:var(--shortener-accent-border-soft)] transition-all">
             <AlignLeft
               size={18}
-              className="text-text-muted/20 group-focus-within:text-accent transition-colors shrink-0 mt-0.5"
+              className="text-text-muted/20 group-focus-within:text-[color:var(--shortener-accent)] transition-colors shrink-0 mt-0.5"
             />
             <div className="flex-1 min-w-0">
               <textarea
@@ -98,7 +96,7 @@ export const BrandingOptions = ({
               "flex items-center gap-4 bg-bg-base/40 rounded-2xl border p-3.5 transition-all",
               !isImageValid
                 ? "border-red-500/30 bg-red-500/[0.02]"
-                : "border-white/5 focus-within:border-accent/30",
+                : "border-white/5 focus-within:border-[color:var(--shortener-accent-border-soft)]",
             )}
           >
             <ImageIcon
@@ -107,7 +105,7 @@ export const BrandingOptions = ({
                 "transition-colors shrink-0",
                 !isImageValid
                   ? "text-red-500/60"
-                  : "text-text-muted/20 group-focus-within:text-accent",
+                  : "text-text-muted/20 group-focus-within:text-[color:var(--shortener-accent)]",
               )}
             />
             <input
@@ -129,7 +127,7 @@ export const BrandingOptions = ({
       <div className="space-y-3">
         <div className="flex items-center justify-between px-1">
           <span className="text-[10px] font-bold uppercase tracking-widest text-text-muted/40 flex items-center gap-2">
-            <Sparkles size={10} className="text-accent" />
+            <Sparkles size={10} className="text-[color:var(--shortener-accent)]" />
             Live Preview
           </span>
         </div>

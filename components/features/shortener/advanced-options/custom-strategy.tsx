@@ -33,15 +33,15 @@ export const CustomStrategy = ({
       className="space-y-4 pt-2"
     >
       <div className="relative group">
-        <div className="absolute inset-0 bg-accent/5 blur-xl rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-700" />
+        <div className="absolute inset-0 bg-[color:var(--shortener-accent-faint)] blur-xl rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-700" />
         <div
           className={cn(
             "relative flex items-center bg-bg-base/60 backdrop-blur-sm rounded-xl border px-4 h-14 transition-all focus-within:bg-bg-base/80",
             !isValid
               ? "border-red-500/30 bg-red-500/[0.02]"
               : customAlias
-                ? "border-accent/20"
-                : "border-white/5 focus-within:border-accent/30",
+                ? "border-[color:var(--shortener-accent-border-soft)]"
+                : "border-white/5 focus-within:border-[color:var(--shortener-accent-border-soft)]",
           )}
         >
           <span className="text-text-muted/50 font-mono text-xs mr-1 select-none shrink-0 transition-colors group-focus-within:text-text-muted/70">

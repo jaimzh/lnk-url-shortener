@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useRef } from "react";
+import React, { useCallback, useRef, useState } from "react";
 import { motion } from "motion/react";
 import { Clipboard } from "lucide-react";
 import { useHeroContext } from "@/context/HeroContext";
@@ -9,18 +9,23 @@ import { readFromClipboard, cn } from "@/lib/utils";
 import { ShortenButton } from "@/components/ui/shorten-button";
 import { urlSchema } from "@/schemas/url";
 import { AdvancedOptions } from "@/components/features/shortener/advanced-options";
+import { ModeSwitcher } from "@/components/features/shortener/mode-switcher";
 import {
   ALIAS_STRATEGIES,
+  SHORTENER_MODES,
   AliasStrategy,
   RandomFlavor,
 } from "@/components/features/shortener/advanced-options/constants";
 import { generateRandomAlias } from "@/components/features/shortener/advanced-options/utils";
+import { useShortenerTheme } from "@/components/features/shortener/shortener-theme-provider";
 
 import { useRouter } from "next/navigation";
 
 export default function UrlInput() {
   const router = useRouter();
-  const { isHeroShortened, setIsHeroShortened } = useHeroContext();
+  const { setIsHeroShortened } = useHeroContext();
+  const { mode: shortenerMode, setMode: setShortenerMode } =
+    useShortenerTheme();
 
   const [url, setUrl] = useState("");
   const [isLoading, setIsLoading] = useState(false);
@@ -44,15 +49,15 @@ export default function UrlInput() {
   const [brandingDescription, setBrandingDescription] = useState("");
   const [brandingImageUrl, setBrandingImageUrl] = useState("");
 
-  const handleRegenerateRandom = () => {
+  const handleRegenerateRandom = useCallback(() => {
     setRandomPreview(generateRandomAlias(randomFlavor));
-  };
+  }, [randomFlavor]);
 
   React.useEffect(() => {
     if (aliasType === ALIAS_STRATEGIES.RANDOM) {
       handleRegenerateRandom();
     }
-  }, [aliasType, randomFlavor]);
+  }, [aliasType, handleRegenerateRandom]);
   const getAliasToSend = () => {
     if (aliasType === ALIAS_STRATEGIES.CUSTOM && customAlias.trim() !== "") {
       return customAlias.trim();
@@ -124,9 +129,11 @@ export default function UrlInput() {
       setBrandingImageUrl("");
 
       setRandomPreview(generateRandomAlias("text"));
-    } catch (error: any) {
+    } catch (error: unknown) {
+      const message =
+        error instanceof Error ? error.message : "An unexpected error occurred";
       console.error("Failed to shorten URL:", error);
-      setError(error.message || "An unexpected error occurred");
+      setError(message);
       setIsLoading(false);
     }
   };
@@ -158,13 +165,15 @@ export default function UrlInput() {
             "group relative flex items-center h-12 md:h-16 w-full rounded-full border bg-bg-base/80 backdrop-blur-xl transition-all duration-300 ease-in-out p-1 md:p-1.5 shadow-2xl",
             error
               ? "border-destructive/50 focus-within:border-destructive"
-              : "border-accent/50 focus-within:border-accent",
+              : "border-[color:var(--shortener-accent-border)] focus-within:border-[color:var(--shortener-accent-focus)]",
           )}
         >
           <div
             className={cn(
-              "absolute top-0 left-0 w-full h-1 bg-linear-to-r from-transparent to-transparent opacity-80",
-              error ? "via-destructive/50" : "via-accent/50",
+              "absolute top-0 left-0 w-full h-1 opacity-80",
+              error
+                ? "bg-linear-to-r from-transparent via-destructive/50 to-transparent"
+                : "bg-[linear-gradient(to_right,transparent,var(--shortener-accent-border),transparent)]",
             )}
           />
 
@@ -178,7 +187,7 @@ export default function UrlInput() {
                 whileHover={{ scale: 1.1 }}
                 whileTap={{ scale: 0.9 }}
                 onClick={handlePaste}
-                className="shrink-0 text-text-muted hover:text-accent transition-colors p-1 cursor-pointer"
+                className="shrink-0 text-text-muted hover:text-[color:var(--shortener-accent)] transition-colors p-1 cursor-pointer"
                 title="Paste from clipboard"
               >
                 <Clipboard
@@ -197,8 +206,15 @@ export default function UrlInput() {
                   setUrl(e.target.value);
                   if (error) setError(null);
                 }}
-                placeholder="Drop long link here..."
-                className="w-full bg-transparent text-text-base placeholder:text-text-muted/20 outline-none text-sm md:text-base font-light tracking-wide py-1 caret-accent"
+                placeholder={
+                  shortenerMode === SHORTENER_MODES.CDN
+                    ? "Drop asset URL here..."
+                    : "Drop long link here..."
+                }
+                className={cn(
+                  "w-full bg-transparent text-text-base placeholder:text-text-muted/20 outline-none text-sm md:text-base font-light tracking-wide py-1",
+                  "caret-[color:var(--shortener-accent)]",
+                )}
               />
             </div>
 
@@ -207,11 +223,16 @@ export default function UrlInput() {
               disabled={!url.trim() || isLoading}
               isLoading={isLoading}
               className="h-full px-2 md:px-4 min-w-[40px] md:min-w-[140px]"
-            />
+            >
+              {shortenerMode === SHORTENER_MODES.CDN ? "Create CDN" : "Shorten"}
+            </ShortenButton>
           </form>
         </div>
 
+        <ModeSwitcher mode={shortenerMode} onModeChange={setShortenerMode} />
+
         <AdvancedOptions
+          mode={shortenerMode}
           showAdvanced={showAdvanced}
           setShowAdvanced={setShowAdvanced}
           aliasType={aliasType}

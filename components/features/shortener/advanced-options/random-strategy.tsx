@@ -49,7 +49,7 @@ export const RandomStrategy = ({
               className={cn(
                 "flex items-center justify-center gap-1.5 px-2.5 sm:px-3 py-1.5 rounded-lg text-xs font-semibold transition-all cursor-pointer flex-grow sm:flex-grow-0",
                 randomFlavor === flavor.id
-                  ? "bg-accent/40 text-text-base"
+                  ? "bg-[color:var(--shortener-accent-soft)] text-text-base"
                   : "text-text-muted hover:text-text-base hover:bg-white/5",
               )}
             >
@@ -61,7 +61,7 @@ export const RandomStrategy = ({
 
       {/* Preview Area */}
       <div className="relative group">
-        <div className="absolute inset-0 bg-accent/5 blur-xl rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-700" />
+        <div className="absolute inset-0 bg-[color:var(--shortener-accent-faint)] blur-xl rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-700" />
         <div className="relative flex items-center justify-between bg-bg-base/60 backdrop-blur-sm px-4 sm:px-6 py-3 sm:py-4 rounded-xl border border-white/5 shadow-inner">
           <div className="flex items-center gap-1 overflow-hidden">
             <span className="text-text-muted/50 font-mono text-sm shrink-0">
@@ -80,7 +80,7 @@ export const RandomStrategy = ({
           <button
             type="button"
             onClick={onRegenerate}
-            className="p-2 -mr-2 text-text-muted hover:text-accent hover:bg-accent/10 rounded-lg transition-all cursor-pointer"
+            className="p-2 -mr-2 text-text-muted hover:text-[color:var(--shortener-accent)] hover:bg-[color:var(--shortener-accent-soft)] rounded-lg transition-all cursor-pointer"
             title="Regenerate"
           >
             <RefreshCcw size={16} />

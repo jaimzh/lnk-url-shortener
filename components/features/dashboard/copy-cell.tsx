@@ -1,6 +1,6 @@
 "use client";
 
-import { Check, Copy, ExternalLink } from "lucide-react";
+import { Check, Copy } from "lucide-react";
 import { useState } from "react";
 import { copyToClipboard } from "@/lib/utils";
 import Link from "next/link";
@@ -24,7 +24,7 @@ export function CopyCell({ text }: { text: string }) {
       <Link
         href={text}
         target="_blank"
-        className="text-text-muted font-mono text-xs hover:text-accent transition-colors duration-300"
+        className="text-text-muted font-mono text-xs hover:text-[color:var(--shortener-accent)] transition-colors duration-300"
         title={text}
       >
         {text.replace(/^https?:\/\//, "")}{" "}
@@ -35,7 +35,7 @@ export function CopyCell({ text }: { text: string }) {
       <Button
         variant="ghost"
         size="icon"
-        className="h-6 w-6 text-text-muted/40 hover:text-accent hover:bg-transparent"
+        className="h-6 w-6 text-text-muted/40 hover:text-[color:var(--shortener-accent)] hover:bg-transparent"
         onClick={handleCopy}
       >
         {copied ? (

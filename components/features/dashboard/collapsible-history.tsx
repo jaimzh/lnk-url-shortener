@@ -23,9 +23,9 @@ export function CollapsibleHistory({
         onClick={() => setIsOpen(!isOpen)}
         className="w-full max-w-4xl mx-auto px-6 py-8 flex items-center gap-6 cursor-pointer group select-none"
       >
-        <div className="h-[1px] flex-1 bg-gradient-to-r from-transparent via-primary/50 to-primary/50 group-hover:via-accent group-hover:to-accent transition-colors duration-500" />
+        <div className="h-[1px] flex-1 bg-gradient-to-r from-transparent via-[color:var(--shortener-accent-border)] to-[color:var(--shortener-accent-border)] group-hover:via-[color:var(--shortener-accent)] group-hover:to-[color:var(--shortener-accent)] transition-colors duration-500" />
 
-        <div className="flex items-center gap-3 text-text-muted group-hover:text-accent transition-colors duration-300">
+        <div className="flex items-center gap-3 text-text-muted group-hover:text-[color:var(--shortener-accent)] transition-colors duration-300">
           <span className="text-xl md:text-2xl font-bold tracking-tight">
             {label}
           </span>
@@ -37,7 +37,7 @@ export function CollapsibleHistory({
           </motion.div>
         </div>
 
-        <div className="h-[1px] flex-1 bg-gradient-to-l from-transparent via-primary/50 to-primary/50 group-hover:via-accent group-hover:to-accent transition-colors duration-500" />
+        <div className="h-[1px] flex-1 bg-gradient-to-l from-transparent via-[color:var(--shortener-accent-border)] to-[color:var(--shortener-accent-border)] group-hover:via-[color:var(--shortener-accent)] group-hover:to-[color:var(--shortener-accent)] transition-colors duration-500" />
       </div>
 
       {/* Collapsible Content */}

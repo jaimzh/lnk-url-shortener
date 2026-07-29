@@ -4,6 +4,7 @@ import Hero from "@/components/hero";
 import { Navbar } from "@/components/navbar";
 import { SectionSeparator } from "@/components/shared/section-separator";
 import StructuredData from "@/components/shared/structured-data";
+import { ShortenerThemeProvider } from "@/components/features/shortener/shortener-theme-provider";
 
 export default function Home({
   searchParams,
@@ -14,13 +15,13 @@ export default function Home({
     <main className="min-h-screen flex flex-col items-center">
       <StructuredData />
       <Navbar />
-      <div className="w-full flex-1 flex flex-col items-center justify-center ">
+      <ShortenerThemeProvider className="flex flex-1 flex-col items-center justify-center">
         <Hero />
 
         <SectionSeparator label="Recent History" />
 
         <DashboardTable searchParams={searchParams} />
-      </div>
+      </ShortenerThemeProvider>
       <Footer />
     </main>
   );

@@ -100,7 +100,7 @@ export async function UrlList(props: Props) {
                 return (
                   <TableRow
                     key={String(url._id)}
-                    className="border-b border-dashed border-border/50 hover:bg-accent/[0.05]"
+                    className="border-b border-dashed border-border/50 hover:bg-[color:var(--shortener-accent-faint)]"
                   >
                     <TableCell className="font-medium">
                       <CopyCell text={fullShortUrl} />
@@ -110,7 +110,7 @@ export async function UrlList(props: Props) {
                           href={url.originalUrl}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="text-muted-foreground text-xs truncate max-w-[200px] hover:text-accent transition-colors flex items-center gap-1"
+                          className="text-muted-foreground text-xs truncate max-w-[200px] hover:text-[color:var(--shortener-accent)] transition-colors flex items-center gap-1"
                         >
                           {url.originalUrl}
                           <ExternalLink size={10} className="opacity-50" />
@@ -119,7 +119,7 @@ export async function UrlList(props: Props) {
                     </TableCell>
 
                     <TableCell className="text-center">
-                      <span className="inline-flex items-center justify-center bg-accent/10 text-accent px-2.5 py-0.5 rounded-full text-[10px] font-bold border border-accent/20 min-w-[3rem]">
+                      <span className="inline-flex items-center justify-center bg-[color:var(--shortener-accent-soft)] text-[color:var(--shortener-accent)] px-2.5 py-0.5 rounded-full text-[10px] font-bold border border-[color:var(--shortener-accent-border-soft)] min-w-[3rem]">
                         {url.clicks.toLocaleString()}
                       </span>
                     </TableCell>
@@ -145,7 +145,7 @@ export async function UrlList(props: Props) {
               <Button
                 variant="outline"
                 size="sm"
-                className="h-8 px-3 text-xs border-border bg-transparent hover:bg-accent/10 hover:text-accent text-muted-foreground disabled:opacity-50"
+                className="h-8 px-3 text-xs border-border bg-transparent hover:bg-[color:var(--shortener-accent-soft)] hover:text-[color:var(--shortener-accent)] text-muted-foreground disabled:opacity-50"
                 asChild
                 disabled={currentPage <= 1}
               >
@@ -158,7 +158,7 @@ export async function UrlList(props: Props) {
               <Button
                 variant="outline"
                 size="sm"
-                className="h-8 px-3 text-xs border-border bg-transparent hover:bg-accent/10 hover:text-accent text-muted-foreground disabled:opacity-50"
+                className="h-8 px-3 text-xs border-border bg-transparent hover:bg-[color:var(--shortener-accent-soft)] hover:text-[color:var(--shortener-accent)] text-muted-foreground disabled:opacity-50"
                 asChild
                 disabled={currentPage >= totalPages}
               >

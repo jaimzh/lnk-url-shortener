@@ -2,9 +2,17 @@
 
 import { motion, AnimatePresence } from "motion/react";
 import { useHeroContext } from "@/context/HeroContext";
+import { SHORTENER_MODES } from "@/components/features/shortener/advanced-options/constants";
+import { useShortenerTheme } from "@/components/features/shortener/shortener-theme-provider";
 
 export default function HeroAnimation() {
   const { isHeroShortened, setIsHeroShortened } = useHeroContext();
+  const { mode } = useShortenerTheme();
+  let tagline = "Turn long URLs into short, shareable links in seconds.";
+
+  if (mode === SHORTENER_MODES.CDN) {
+    tagline = "Turn images, files, and assets into fast CDN links.";
+  }
 
   return (
     <div
@@ -37,7 +45,7 @@ export default function HeroAnimation() {
               exit={{ opacity: 0 }}
               className="text-text-muted/60 text-sm md:text-base font-light tracking-wide max-w-lg leading-relaxed mt-3"
             >
-              Turn long URLs into short, shareable links in seconds.
+              {tagline}
             </motion.p>
           ) : (
             <motion.p
@@ -47,7 +55,7 @@ export default function HeroAnimation() {
               transition={{ delay: 0.6, duration: 0.8, ease: "easeOut" }}
               className="text-text-muted/60 text-sm md:text-base font-light tracking-wide max-w-lg leading-relaxed"
             >
-              Turn long URLs into short, shareable links in seconds.
+              {tagline}
             </motion.p>
           )}
         </AnimatePresence>
@@ -93,7 +101,7 @@ export default function HeroAnimation() {
         .dot {
           width: 0.2em;
           height: 0.2em;
-          background-color: var(--accent);
+          background-color: var(--shortener-accent, var(--accent));
           border-radius: 50%;
           display: inline-block;
           margin-left: 2px;
@@ -113,7 +121,7 @@ export default function HeroAnimation() {
           position: absolute;
           width: 180%;
           height: 180%;
-          background: radial-gradient(circle at center, var(--accent) 0%, transparent 70%);
+          background: radial-gradient(circle at center, var(--shortener-accent, var(--accent)) 0%, transparent 70%);
           filter: blur(100px);
           border-radius: 50%;
           opacity: 0.6;

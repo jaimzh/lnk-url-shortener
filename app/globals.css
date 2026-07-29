@@ -12,6 +12,7 @@
     --custom-text-muted: hsl(0, 0%, 70%);
 
     --custom-accent: hwb(262 0% 20%);
+    --custom-cdn-accent: hwb(156 0% 31%);
     --custom-border: hsl(0, 0%, 20%);
 
     /* Mapping to Shadcn/UI Variables */
@@ -80,6 +81,7 @@
   --color-custom-text-base: var(--custom-text-base);
   --color-custom-text-muted: var(--custom-text-muted);
   --color-custom-accent: var(--custom-accent);
+  --color-custom-cdn-accent: var(--custom-cdn-accent);
   --color-custom-border: var(--custom-border);
 
   /* Helper aliases */

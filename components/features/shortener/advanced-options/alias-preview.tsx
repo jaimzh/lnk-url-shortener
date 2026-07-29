@@ -36,7 +36,7 @@ export const AliasPreview = ({
       <button
         type="button"
         onClick={onClear}
-        className="text-[10px] uppercase font-bold text-text-muted hover:text-accent transition-colors cursor-pointer shrink-0"
+        className="text-[10px] uppercase font-bold text-text-muted hover:text-[color:var(--shortener-accent)] transition-colors cursor-pointer shrink-0"
       >
         Clear
       </button>

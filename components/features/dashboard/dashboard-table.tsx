@@ -52,7 +52,7 @@ export async function DashboardTable(props: DashboardTableProps) {
 
   return (
     <div id="dashboard-table" className="w-full flex justify-center py-6">
-      <div className="w-full max-w-4xl rounded-xl border border-accent/50 overflow-hidden bg-bg-base/40 backdrop-blur-md shadow-xl ring-1 ring-white/5">
+      <div className="w-full max-w-4xl rounded-xl border border-[color:var(--shortener-accent-border)] overflow-hidden bg-bg-base/40 backdrop-blur-md shadow-xl ring-1 ring-white/5">
         <Table className="w-full">
           <TableHeader>
             <TableRow className="hover:bg-transparent border-b border-white/5">
@@ -91,7 +91,7 @@ export async function DashboardTable(props: DashboardTableProps) {
                 return (
                   <TableRow
                     key={String(url._id)}
-                    className="hover:bg-accent/5 transition-colors duration-300 border-b border-white/5 group"
+                    className="hover:bg-[color:var(--shortener-accent-faint)] transition-colors duration-300 border-b border-white/5 group"
                   >
                     <TableCell className="py-4">
                       <div className="flex items-center justify-center w-full px-4">
@@ -100,7 +100,7 @@ export async function DashboardTable(props: DashboardTableProps) {
                     </TableCell>
 
                     <TableCell className="py-4">
-                      <div className="flex items-center justify-center w-full px-4 text-text-muted group-hover:text-accent transition-colors duration-300">
+                      <div className="flex items-center justify-center w-full px-4 text-text-muted group-hover:text-[color:var(--shortener-accent)] transition-colors duration-300">
                         <QrCell
                           originalUrl={url.originalUrl}
                           shortUrl={fullShortLink}
@@ -123,7 +123,7 @@ export async function DashboardTable(props: DashboardTableProps) {
         </Table>
 
         {totalPages > 1 && (
-          <div className="flex items-center justify-between px-6 py-4 border-t border-white/5 bg-accent/2">
+          <div className="flex items-center justify-between px-6 py-4 border-t border-white/5 bg-[color:var(--shortener-accent-faint)]">
             <p className="text-xs text-text-muted/40 font-mono">
               PAGE {currentPage} OF {totalPages}
             </p>
@@ -133,7 +133,7 @@ export async function DashboardTable(props: DashboardTableProps) {
                 variant="ghost"
                 size="sm"
                 asChild
-                className="h-8 px-4 text-xs font-medium text-text-muted hover:text-text-base hover:bg-accent/10 transition-all duration-300 disabled:opacity-30"
+                className="h-8 px-4 text-xs font-medium text-text-muted hover:text-text-base hover:bg-[color:var(--shortener-accent-soft)] transition-all duration-300 disabled:opacity-30"
                 disabled={currentPage <= 1}
               >
                 {currentPage > 1 ? (
@@ -149,7 +149,7 @@ export async function DashboardTable(props: DashboardTableProps) {
                 variant="ghost"
                 size="sm"
                 asChild
-                className="h-8 px-4 text-xs font-medium text-text-muted hover:text-text-base hover:bg-accent/10 transition-all duration-300 disabled:opacity-30"
+                className="h-8 px-4 text-xs font-medium text-text-muted hover:text-text-base hover:bg-[color:var(--shortener-accent-soft)] transition-all duration-300 disabled:opacity-30"
                 disabled={currentPage >= totalPages}
               >
                 {currentPage < totalPages ? (
