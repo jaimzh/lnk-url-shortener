@@ -3,7 +3,13 @@
 import React from "react";
 import { motion } from "motion/react";
 
-export default function LoadingSpinner() {
+interface LoadingSpinnerProps {
+  label?: string;
+}
+
+export default function LoadingSpinner({
+  label = "Shortening Link...",
+}: LoadingSpinnerProps) {
   return (
     <motion.div
       key="loading"
@@ -14,7 +20,7 @@ export default function LoadingSpinner() {
     >
       <div className="relative w-20 h-20 flex items-center justify-center">
         <motion.span
-          className="absolute w-full h-full border-4 border-accent/20 rounded-full"
+          className="absolute w-full h-full border-4 border-[color:var(--shortener-accent-soft,var(--accent))] rounded-full"
           animate={{ scale: [1, 1.1, 1], opacity: [0.5, 1, 0.5] }}
           transition={{
             duration: 2,
@@ -23,7 +29,7 @@ export default function LoadingSpinner() {
           }}
         />
         <motion.span
-          className="absolute w-full h-full border-t-4 border-accent rounded-full"
+          className="absolute w-full h-full border-t-4 border-[color:var(--shortener-accent,var(--accent))] rounded-full"
           animate={{ rotate: 360 }}
           transition={{
             duration: 1,
@@ -38,7 +44,7 @@ export default function LoadingSpinner() {
         transition={{ delay: 0.2 }}
         className="text-text-muted text-sm font-medium tracking-widest uppercase"
       >
-        Shortening Link...
+        {label}
       </motion.p>
     </motion.div>
   );

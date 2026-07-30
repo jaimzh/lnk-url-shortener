@@ -105,9 +105,12 @@ export default function HeroAnimation() {
           border-radius: 50%;
           display: inline-block;
           margin-left: 2px;
-          transition: all 0.8s cubic-bezier(0.68, -0.6, 0.32, 1.6);
-          transform: translateY(0.1em);
-        }
+        
+          transition:width 0.8s cubic-bezier(0.68,
+           -0.6, 0.32, 1.6), height 0.8s cubic-bezier(0.68, -0.6, 0.32, 1.6), 
+           transform 0.8s cubic-bezier(0.68, -0.6, 0.32, 1.6);
+}
+          
 
         .shortened .dot {
           width: clamp(20px, 4vw, 34px);

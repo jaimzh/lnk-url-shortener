@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import { createPortal } from "react-dom";
 import { motion, AnimatePresence } from "motion/react";
 
@@ -8,13 +8,11 @@ interface ModalProps {
   isOpen: boolean;
   onClose: () => void;
   children: React.ReactNode;
+  style?: React.CSSProperties;
 }
 
-export default function Modal({ isOpen, onClose, children }: ModalProps) {
-  const [mounted, setMounted] = useState(false);
-
+export default function Modal({ isOpen, onClose, children, style }: ModalProps) {
   useEffect(() => {
-    setMounted(true);
     if (isOpen) {
       // Prevent scrolling and hide scrollbar
       document.body.style.overflow = "hidden";
@@ -29,7 +27,7 @@ export default function Modal({ isOpen, onClose, children }: ModalProps) {
     };
   }, [isOpen]);
 
-  if (!mounted) return null;
+  if (typeof document === "undefined") return null;
 
   return createPortal(
     <AnimatePresence>
@@ -59,7 +57,10 @@ export default function Modal({ isOpen, onClose, children }: ModalProps) {
           `,
             }}
           />
-          <div className="fixed inset-0 z-[9999] flex items-center justify-center overflow-y-auto no-scrollbar outline-none">
+          <div
+            className="fixed inset-0 z-[9999] flex items-center justify-center overflow-y-auto no-scrollbar outline-none"
+            style={style}
+          >
             {/* Backdrop */}
             <motion.div
               initial={{ opacity: 0 }}

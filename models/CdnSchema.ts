@@ -1,24 +1,24 @@
-import { Schema, model, models } from "mongoose";
+import mongoose, { Schema, model, models } from "mongoose";
 
-export const CDN_ASSET_KINDS = ["file", "text"] as const;
-export const CDN_ASSET_PROVIDERS = [
+export const CDN_KINDS = ["file", "text"] as const;
+export const CDN_PROVIDERS = [
   "uploadthing",
   "cloudinary",
   "cloudflare-r2",
   "vercel-blob",
 ] as const;
-export const CDN_ASSET_STATUSES = ["pending", "ready", "failed", "deleted"] as const;
+export const CDN_STATUSES = ["pending", "ready", "failed", "deleted"] as const;
 
-export type CdnAssetKind = (typeof CDN_ASSET_KINDS)[number];
-export type CdnAssetProvider = (typeof CDN_ASSET_PROVIDERS)[number];
-export type CdnAssetStatus = (typeof CDN_ASSET_STATUSES)[number];
+export type CdnKind = (typeof CDN_KINDS)[number];
+export type CdnProvider = (typeof CDN_PROVIDERS)[number];
+export type CdnStatus = (typeof CDN_STATUSES)[number];
 
-const CdnAssetSchema = new Schema(
+const CdnSchema = new Schema(
   {
     alias: { type: String, required: true, unique: true, index: true },
     kind: {
       type: String,
-      enum: CDN_ASSET_KINDS,
+      enum: CDN_KINDS,
       required: true,
     },
     originalName: { type: String, required: true },
@@ -27,11 +27,13 @@ const CdnAssetSchema = new Schema(
 
     provider: {
       type: String,
-      enum: CDN_ASSET_PROVIDERS,
+      enum: CDN_PROVIDERS,
       required: true,
     },
     storageKey: { type: String, required: true },
+    providerUrl: { type: String, required: true },
     publicUrl: { type: String, required: true },
+    clicks: { type: Number, default: 0 },
 
     cacheTtlSeconds: { type: Number, required: true, min: 0 },
     cacheControl: { type: String, required: true },
@@ -45,7 +47,7 @@ const CdnAssetSchema = new Schema(
     },
     status: {
       type: String,
-      enum: CDN_ASSET_STATUSES,
+      enum: CDN_STATUSES,
       default: "pending",
       required: true,
     },
@@ -53,7 +55,7 @@ const CdnAssetSchema = new Schema(
   { timestamps: true },
 );
 
-CdnAssetSchema.index(
+CdnSchema.index(
   { expiresAt: 1 },
   {
     expireAfterSeconds: 0,
@@ -61,24 +63,32 @@ CdnAssetSchema.index(
   },
 );
 
-export const CdnAsset =
-  models.CdnAsset || model("CdnAsset", CdnAssetSchema);
+if (
+  models.Cdn &&
+  (!models.Cdn.schema.path("providerUrl") || !models.Cdn.schema.path("clicks"))
+) {
+  mongoose.deleteModel("Cdn");
+}
 
-export interface CdnAssetDoc {
+export const Cdn = models.Cdn || model("Cdn", CdnSchema, "cdns");
+
+export interface CdnDoc {
   _id: unknown;
   alias: string;
-  kind: CdnAssetKind;
+  kind: CdnKind;
   originalName: string;
   contentType: string;
   size: number;
-  provider: CdnAssetProvider;
+  provider: CdnProvider;
   storageKey: string;
+  providerUrl: string;
   publicUrl: string;
+  clicks: number;
   cacheTtlSeconds: number;
   cacheControl: string;
   expiresAt: Date | null;
   visibility: "public" | "private";
-  status: CdnAssetStatus;
+  status: CdnStatus;
   createdAt: Date;
   updatedAt: Date;
 }

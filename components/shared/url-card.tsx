@@ -2,12 +2,13 @@
 
 import React, { useState } from "react";
 import { motion } from "motion/react";
-import { Copy, Check, X, ExternalLink } from "lucide-react";
+import { Copy, Check, CheckCheck, X, ExternalLink } from "lucide-react";
 import { QRCodeCanvas } from "qrcode.react";
 
 import { Button } from "@/components/ui/button";
 
 interface UrlCardProps {
+  mode?: "link" | "cdn";
   result: {
     originalUrl: string;
     shortUrl: string;
@@ -15,7 +16,7 @@ interface UrlCardProps {
   onClose: () => void;
 }
 
-export default function UrlCard({ result, onClose }: UrlCardProps) {
+export default function UrlCard({ mode = "link", result, onClose }: UrlCardProps) {
   const [copied, setCopied] = useState(false);
 
   const handleCopy = async () => {
@@ -42,26 +43,30 @@ export default function UrlCard({ result, onClose }: UrlCardProps) {
         damping: 30,
         opacity: { duration: 0.15 },
       }}
-      className="relative bg-bg-base border border-border rounded-2xl shadow-2xl overflow-hidden max-w-sm w-full"
+      className="relative bg-bg-base border border-[color:var(--shortener-accent-border-soft,var(--border))] rounded-2xl shadow-2xl overflow-hidden max-w-sm w-full"
     >
-      <Button
-        variant="ghost"
-        size="icon"
+      <button
+        type="button"
         onClick={onClose}
-        className="absolute top-3 right-3 text-text-muted hover:text-text-base hover:bg-white/5 rounded-full z-10 w-8 h-8"
+        className="absolute top-3 right-3 z-10 inline-flex h-8 w-8 items-center justify-center rounded-full text-text-muted transition-colors hover:bg-[color:var(--shortener-accent-soft,var(--accent))] hover:text-text-base"
       >
         <X size={18} />
-      </Button>
+      </button>
 
       <div className="p-6 md:p-8 flex flex-col items-center text-center space-y-6">
         <div className=" flex gap-2 items-center justify-center mb-2">
-          <Check size={32} strokeWidth={3} />
+
+          <CheckCheck
+            size={32}
+            strokeWidth={3}
+            className="text-[color:var(--shortener-accent,var(--accent))]"
+          />
           <h3 className="text-xl md:text-2xl font-semibold text-text-base">
-            Lnnk
+            {mode === "cdn" ? "lnnk" : "lnnk"}
           </h3>
         </div>
 
-        <div className="h-px w-full max-w-4xl bg-linear-to-r from-transparent via-border to-transparent"></div>
+        <div className="h-px w-full max-w-4xl bg-linear-to-r from-transparent via-transparent to-transparent [--tw-gradient-via:var(--shortener-accent-border-soft,var(--border))]"></div>
 
         <div className="space-y-1 w-full overflow-hidden">
           <p className="text-text-muted text-sm truncate max-w-full px-4 opacity-70">
@@ -91,7 +96,7 @@ export default function UrlCard({ result, onClose }: UrlCardProps) {
 
         {/* Result Box */}
         <div
-          className="w-full bg-white/5 border border-border/40 rounded-xl p-4 flex items-center justify-between gap-3 group hover:border-border transition-colors cursor-pointer"
+          className="w-full bg-white/5 border border-[color:var(--shortener-accent-border-soft,var(--border))] rounded-xl p-4 flex items-center justify-between gap-3 group hover:border-[color:var(--shortener-accent-border,var(--border))] transition-colors cursor-pointer"
           onClick={handleCopy}
         >
           <span className="text-text-base text-lg font-medium truncate">
@@ -104,7 +109,7 @@ export default function UrlCard({ result, onClose }: UrlCardProps) {
           <Button
             onClick={handleCopy}
             variant="pill"
-            className={`flex-1 py-3 px-4 font-medium transition-all ${
+            className={`flex-1 py-3 px-4 font-medium transition-all bg-[color:var(--shortener-button-bg,var(--accent))] text-[color:var(--shortener-button-text,var(--text-base))] hover:brightness-110 ${
               copied
                 ? "bg-green-500/20 text-green-400 hover:bg-green-500/30 hover:brightness-100 shadow-none border border-green-500/20"
                 : ""
@@ -114,16 +119,15 @@ export default function UrlCard({ result, onClose }: UrlCardProps) {
             {copied ? "Copied" : "Copy Link"}
           </Button>
 
-          <Button
-            asChild
-            variant="ghost"
-            className="bg-white/5 hover:bg-white/10 text-text-base p-3 rounded-full h-auto"
+          <a
+            href={result.shortUrl}
+            target="_blank"
+            rel="noreferrer"
+            className="inline-flex items-center justify-center rounded-full bg-white/5 p-3 text-text-base transition-colors hover:bg-[color:var(--shortener-accent-soft,var(--accent))]"
             title="Open Link"
           >
-            <a href={result.shortUrl} target="_blank" rel="noreferrer">
-              <ExternalLink size={20} />
-            </a>
-          </Button>
+            <ExternalLink size={20} />
+          </a>
         </div>
       </div>
     </motion.div>

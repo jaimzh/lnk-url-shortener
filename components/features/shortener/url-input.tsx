@@ -8,6 +8,11 @@ import { useHeroContext } from "@/context/HeroContext";
 import LoadingModal from "@/components/features/shortener/loading-modal";
 import { readFromClipboard, cn } from "@/lib/utils";
 import { ShortenButton } from "@/components/ui/shorten-button";
+import { uploadFiles } from "@/lib/uploadthing";
+import {
+  createCdnAssetOptionsSchema,
+  createCdnTextAssetSchema,
+} from "@/schemas/cdn-asset";
 import { urlSchema } from "@/schemas/url";
 import { AdvancedOptions } from "@/components/features/shortener/advanced-options";
 import { ModeSwitcher } from "@/components/features/shortener/mode-switcher";
@@ -44,6 +49,9 @@ type CdnAssetInputProps = InputAreaProps & {
   onPreviewOpen: () => void;
 };
 
+function getTextAssetFilename(alias: string) {
+  return alias.toLowerCase().endsWith(".txt") ? alias : `${alias}.txt`;
+}
 function formatFileSize(size: number) {
   if (size < 1024) return `${size} B`;
   if (size < 1024 * 1024) return `${(size / 1024).toFixed(1)} KB`;
@@ -178,7 +186,6 @@ function CdnAssetInput({
       <input
         ref={fileInputRef}
         type="file"
-        accept="image/*"
         className="sr-only"
         onChange={(event) => handleFile(event.target.files?.[0])}
       />
@@ -384,6 +391,7 @@ export default function UrlInput() {
 
   const [url, setUrl] = useState("");
   const [assetPreview, setAssetPreview] = useState<AssetPreview | null>(null);
+  const [selectedAssetFile, setSelectedAssetFile] = useState<File | null>(null);
   const [isPreviewOpen, setIsPreviewOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -438,6 +446,7 @@ export default function UrlInput() {
   const handleUrlChange = (value: string) => {
     setUrl(value);
     if (assetPreview) setAssetPreview(null);
+    if (selectedAssetFile) setSelectedAssetFile(null);
     if (error) setError(null);
   };
 
@@ -447,6 +456,7 @@ export default function UrlInput() {
     }
 
     setUrl("");
+    setSelectedAssetFile(file);
     setError(null);
     setAssetPreview({
       name: file.name,
@@ -461,7 +471,24 @@ export default function UrlInput() {
     }
 
     setAssetPreview(null);
+    setSelectedAssetFile(null);
     inputRef.current?.focus();
+  };
+
+  const resetFormState = () => {
+    setUrl("");
+    setCustomAlias("");
+    setRandomFlavor("text");
+    setAliasType("random");
+    setVisibility("public");
+    setCdnExpiresInSeconds(null);
+    setCdnCacheTtlSeconds(24 * 60 * 60);
+    setBrandingTitle("");
+    setBrandingDescription("");
+    setBrandingImageUrl("");
+    setRandomPreview(generateRandomAlias("text"));
+    setSelectedAssetFile(null);
+    setAssetPreview(null);
   };
 
   const handleShorten = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -471,12 +498,102 @@ export default function UrlInput() {
     const trimmed = url.trim();
     const alias = getAliasToSend();
 
+    if (shortenerMode === SHORTENER_MODES.CDN) {
+      const optionsValidation = createCdnAssetOptionsSchema.safeParse({
+        alias,
+        expiresInSeconds: cdnExpiresInSeconds,
+        cacheTtlSeconds: cdnCacheTtlSeconds,
+        visibility,
+      });
+
+      if (!optionsValidation.success) {
+        setError(optionsValidation.error.issues[0].message);
+        return;
+      }
+
+      let cdnFile = selectedAssetFile;
+
+      if (!cdnFile) {
+        const textValidation = createCdnTextAssetSchema.safeParse({
+          content: trimmed,
+          ...optionsValidation.data,
+        });
+
+        if (!textValidation.success) {
+          setError(textValidation.error.issues[0].message);
+          return;
+        }
+
+        cdnFile = new File(
+          [textValidation.data.content],
+          getTextAssetFilename(textValidation.data.alias || alias),
+          { type: "text/plain;charset=utf-8" },
+        );
+      }
+
+      setIsLoading(true);
+      setResult(null);
+
+      try {
+        const uploadedFiles = await uploadFiles("cdnAssetUploader", {
+          files: [cdnFile],
+        });
+        const uploadedFile = uploadedFiles[0];
+
+        if (!uploadedFile) {
+          throw new Error("Upload did not return a file");
+        }
+
+        const uploadedUrl = uploadedFile.ufsUrl || uploadedFile.url;
+        const response = await fetch("/api/cdn-assets", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            filename: cdnFile.name,
+            contentType: cdnFile.type || "application/octet-stream",
+            size: cdnFile.size,
+            uploadthingKey: uploadedFile.key,
+            uploadthingUrl: uploadedUrl,
+            alias: optionsValidation.data.alias,
+            expiresInSeconds: optionsValidation.data.expiresInSeconds,
+            cacheTtlSeconds: optionsValidation.data.cacheTtlSeconds,
+            visibility: optionsValidation.data.visibility,
+          }),
+        });
+
+        if (!response.ok) {
+          const errorData = await response.json().catch(() => ({}));
+          throw new Error(errorData.error || "Failed to create CDN asset");
+        }
+
+        const data = await response.json();
+
+        await new Promise((resolve) => setTimeout(resolve, 600));
+
+        setResult({
+          originalUrl: data.alias,
+          shortUrl: data.publicUrl,
+        });
+        router.refresh();
+        setIsLoading(false);
+        resetFormState();
+      } catch (error: unknown) {
+        const message =
+          error instanceof Error ? error.message : "An unexpected error occurred";
+        console.error("Failed to create CDN asset:", error);
+        setError(message);
+        setIsLoading(false);
+      }
+
+      return;
+    }
+
     const validation = urlSchema.safeParse({
       url: trimmed,
-      alias: alias,
-      visibility: visibility,
-      brandingTitle: brandingTitle,
-      brandingDescription: brandingDescription,
+      alias,
+      visibility,
+      brandingTitle,
+      brandingDescription,
       brandingImage: brandingImageUrl,
     });
 
@@ -515,18 +632,7 @@ export default function UrlInput() {
       setResult(data);
       router.refresh();
       setIsLoading(false);
-      setUrl("");
-      setCustomAlias("");
-      setRandomFlavor("text");
-      setAliasType("random");
-      setVisibility("public");
-      setCdnExpiresInSeconds(null);
-      setCdnCacheTtlSeconds(24 * 60 * 60);
-      setBrandingTitle("");
-      setBrandingDescription("");
-      setBrandingImageUrl("");
-
-      setRandomPreview(generateRandomAlias("text"));
+      resetFormState();
     } catch (error: unknown) {
       const message =
         error instanceof Error ? error.message : "An unexpected error occurred";
@@ -535,11 +641,15 @@ export default function UrlInput() {
       setIsLoading(false);
     }
   };
-
   const handleCloseModal = () => {
     setResult(null);
     setIsLoading(false);
   };
+
+  const isSubmitDisabled =
+    shortenerMode === SHORTENER_MODES.CDN
+      ? (!url.trim() && !selectedAssetFile) || isLoading
+      : !url.trim() || isLoading;
 
   const handlePaste = async () => {
     const copiedText = await readFromClipboard();
@@ -559,6 +669,7 @@ export default function UrlInput() {
       />
       <LoadingModal
         isLoading={isLoading}
+        mode={shortenerMode}
         result={result}
         onClose={handleCloseModal}
       />
@@ -610,7 +721,7 @@ export default function UrlInput() {
 
             <ShortenButton
               type="submit"
-              disabled={!url.trim() || isLoading}
+              disabled={isSubmitDisabled}
               isLoading={isLoading}
               className="h-full px-2 md:px-4 min-w-[40px] md:min-w-[140px]"
             >
