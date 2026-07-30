@@ -25,12 +25,6 @@ const formatDate = (date: Date) => {
   });
 };
 
-const formatFileSize = (size: number) => {
-  if (size < 1024) return `${size} B`;
-  if (size < 1024 * 1024) return `${(size / 1024).toFixed(1)} KB`;
-  return `${(size / (1024 * 1024)).toFixed(1)} MB`;
-};
-
 type DashboardTableProps = {
   searchParams?: Promise<{ page?: string }>;
   codePageNumber?: number;
@@ -39,7 +33,6 @@ type DashboardTableProps = {
 type LeanUrlRow = {
   _id: unknown;
   shortCode: string;
-  originalUrl: string;
   clicks: number;
   createdAt: Date;
 };
@@ -47,9 +40,6 @@ type LeanUrlRow = {
 type LeanCdnRow = {
   _id: unknown;
   publicUrl: string;
-  originalName: string;
-  contentType: string;
-  size: number;
   clicks?: number;
   createdAt: Date;
 };
@@ -58,7 +48,6 @@ type DashboardRow = {
   id: string;
   mode: ShortenerMode;
   href: string;
-  originalLabel: string;
   metric: string;
   createdAt: Date;
 };
@@ -84,7 +73,6 @@ export async function DashboardTable(props: DashboardTableProps) {
       id: String(url._id),
       mode: SHORTENER_MODES.LINK,
       href: `${baseUrl}/${url.shortCode}`,
-      originalLabel: url.originalUrl,
       metric: url.clicks.toLocaleString(),
       createdAt: url.createdAt,
     })),
@@ -92,7 +80,6 @@ export async function DashboardTable(props: DashboardTableProps) {
       id: String(cdn._id),
       mode: SHORTENER_MODES.CDN,
       href: cdn.publicUrl,
-      originalLabel: `${cdn.originalName} - ${cdn.contentType} - ${formatFileSize(cdn.size)}`,
       metric: (cdn.clicks || 0).toLocaleString(),
       createdAt: cdn.createdAt,
     })),
@@ -170,9 +157,6 @@ export async function DashboardTable(props: DashboardTableProps) {
                       <div className="flex items-center justify-center w-full px-4">
                         <div className="min-w-0">
                           <CopyCell text={row.href} />
-                          <p className="mt-1 max-w-[18rem] truncate text-left text-[10px] text-text-muted/35">
-                            {row.originalLabel}
-                          </p>
                         </div>
                       </div>
                     </TableCell>
@@ -181,7 +165,7 @@ export async function DashboardTable(props: DashboardTableProps) {
                       <div className="flex items-center justify-center w-full px-4 text-text-muted group-hover:text-[color:var(--shortener-accent)] transition-colors duration-300">
                         <QrCell
                           mode={row.mode}
-                          originalUrl={row.originalLabel}
+                          originalUrl={row.href}
                           shortUrl={row.href}
                         />
                       </div>

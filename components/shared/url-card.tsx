@@ -68,12 +68,6 @@ export default function UrlCard({ mode = "link", result, onClose }: UrlCardProps
 
         <div className="h-px w-full max-w-4xl bg-linear-to-r from-transparent via-transparent to-transparent [--tw-gradient-via:var(--shortener-accent-border-soft,var(--border))]"></div>
 
-        <div className="space-y-1 w-full overflow-hidden">
-          <p className="text-text-muted text-sm truncate max-w-full px-4 opacity-70">
-            {result.originalUrl}
-          </p>
-        </div>
-
         {/* QR Code */}
         <motion.div
           whileHover={{ scale: 1.1 }}

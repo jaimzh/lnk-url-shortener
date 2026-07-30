@@ -55,14 +55,6 @@ const CdnSchema = new Schema(
   { timestamps: true },
 );
 
-CdnSchema.index(
-  { expiresAt: 1 },
-  {
-    expireAfterSeconds: 0,
-    partialFilterExpression: { expiresAt: { $type: "date" } },
-  },
-);
-
 if (
   models.Cdn &&
   (!models.Cdn.schema.path("providerUrl") || !models.Cdn.schema.path("clicks"))
