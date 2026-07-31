@@ -1,7 +1,8 @@
 import { MetadataRoute } from "next";
+import { getBaseUrl } from "@/lib/server-utils";
 
-export default function sitemap(): MetadataRoute.Sitemap {
-  const baseUrl = "https://lnnk.click";
+export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
+  const baseUrl = await getBaseUrl();
 
   return [
     {

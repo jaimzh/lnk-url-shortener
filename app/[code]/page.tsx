@@ -3,6 +3,7 @@ import { Url } from "@/models/UrlSchema";
 import { notFound, redirect } from "next/navigation";
 import { headers } from "next/headers";
 import { Metadata } from "next";
+import { getBaseUrl } from "@/lib/server-utils";
 
 // metadata that bots read, so we just get the data from db
 export async function generateMetadata({
@@ -14,6 +15,7 @@ export async function generateMetadata({
   const { code: rawCode } = await params;
   const code = decodeURIComponent(rawCode);
   const urlEntry = await Url.findOne({ shortCode: code });
+  const baseUrl = await getBaseUrl();
 
   const DEFAULT_PREVIEW_IMAGE = "https://lnnk.click/lnnk-wide.png";
 
@@ -27,7 +29,7 @@ export async function generateMetadata({
     openGraph: {
       title: urlEntry.brandingTitle || undefined,
       description: urlEntry.brandingDescription || undefined,
-      url: `https://lnnk.click/${code}`,
+      url: `${baseUrl}/${code}`,
       siteName: "LNNK",
       images: [
         {

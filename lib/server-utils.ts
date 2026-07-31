@@ -1,19 +1,19 @@
 import { headers } from "next/headers";
 
 export async function getBaseUrl() {
-  let baseUrl = "";
   if (process.env.BASE_URL && process.env.NODE_ENV === "production") {
-    baseUrl = process.env.BASE_URL.replace(/\/$/, "");
-  } else {
-    const headerList = await headers();
-    const host = headerList.get("host");
-    const protocol = process.env.NODE_ENV === "development" ? "http" : "https";
-    baseUrl = `${protocol}://${host}`;
+    return process.env.BASE_URL.replace(/\/$/, "");
   }
 
-  if (baseUrl.includes("pxxl.click") || baseUrl.includes("vercel.app")) {
-    return "https://lnnk.click";
+  const headerList = await headers();
+  const host = headerList.get("x-forwarded-host") || headerList.get("host");
+  const protocol =
+    headerList.get("x-forwarded-proto") ||
+    (process.env.NODE_ENV === "development" ? "http" : "https");
+
+  if (!host) {
+    return process.env.NEXT_PUBLIC_BASE_URL?.replace(/\/$/, "") || "http://localhost:3000";
   }
 
-  return baseUrl;
+  return `${protocol}://${host}`.replace(/\/$/, "");
 }

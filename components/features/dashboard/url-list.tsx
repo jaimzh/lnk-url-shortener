@@ -13,6 +13,7 @@ import { Button } from "@/components/ui/button";
 import dbConnect from "@/lib/db";
 import { Url } from "@/models/UrlSchema";
 import { CopyCell } from "./copy-cell";
+import { getBaseUrl } from "@/lib/server-utils";
 
 // Simple date formatter
 const formatDate = (date: Date) => {
@@ -34,6 +35,8 @@ type Props = {
 };
 
 export async function UrlList(props: Props) {
+  const baseUrl = await getBaseUrl();
+
   await dbConnect();
 
   // Handle both searchParams (from Page) and direct prop usage
@@ -92,10 +95,10 @@ export async function UrlList(props: Props) {
                 </TableCell>
               </TableRow>
             ) : (
-              urls.map((doc: any) => {
+              urls.map((doc) => {
                 // using any to bypass strict ID checks on lean objects, or cast
                 const url = doc as UrlDoc;
-                const fullShortUrl = `${process.env.BASE_URL || ""}/${url.shortCode}`;
+                const fullShortUrl = `${baseUrl}/${url.shortCode}`;
 
                 return (
                   <TableRow
