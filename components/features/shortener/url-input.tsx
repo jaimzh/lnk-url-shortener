@@ -47,77 +47,10 @@ type CdnAssetInputProps = InputAreaProps & {
   onAssetSelect: (file: File) => void;
   onAssetClear: () => void;
   onPreviewOpen: () => void;
-  onError: (message: string | null) => void;
 };
 
 function getTextAssetFilename(alias: string) {
   return alias.toLowerCase().endsWith(".txt") ? alias : `${alias}.txt`;
-}
-
-const MAX_CDN_ASSET_SIZE = 16 * 1024 * 1024;
-
-const MIME_EXTENSION_MAP: Record<string, string> = {
-  "image/avif": "avif",
-  "image/gif": "gif",
-  "image/heic": "heic",
-  "image/heif": "heif",
-  "image/jpeg": "jpg",
-  "image/png": "png",
-  "image/webp": "webp",
-  "text/plain": "txt",
-};
-
-const EXTENSION_MIME_MAP: Record<string, string> = {
-  avif: "image/avif",
-  gif: "image/gif",
-  heic: "image/heic",
-  heif: "image/heif",
-  jpeg: "image/jpeg",
-  jpg: "image/jpeg",
-  png: "image/png",
-  txt: "text/plain",
-  webp: "image/webp",
-};
-
-function getFileExtension(filename: string) {
-  return filename.split(".").pop()?.toLowerCase();
-}
-
-function inferFileType(file: File) {
-  if (file.type) return file.type;
-
-  const extension = getFileExtension(file.name);
-  return extension ? EXTENSION_MIME_MAP[extension] || "" : "";
-}
-
-function normalizeAssetFile(file: File) {
-  const contentType = inferFileType(file) || "application/octet-stream";
-  const hasUsableName = file.name.trim().length > 0;
-
-  if (hasUsableName && file.type) {
-    return file;
-  }
-
-  const extension =
-    MIME_EXTENSION_MAP[contentType] ||
-    getFileExtension(file.name) ||
-    "bin";
-  const fallbackName = contentType.startsWith("image/")
-    ? `dropped-image.${extension}`
-    : `dropped-file.${extension}`;
-
-  return new File([file], hasUsableName ? file.name : fallbackName, {
-    type: contentType,
-    lastModified: file.lastModified,
-  });
-}
-
-function getDroppedFile(dataTransfer: DataTransfer) {
-  const itemFile = Array.from(dataTransfer.items)
-    .find((item) => item.kind === "file")
-    ?.getAsFile();
-
-  return itemFile || dataTransfer.files?.[0];
 }
 function formatFileSize(size: number) {
   if (size < 1024) return `${size} B`;
@@ -174,7 +107,6 @@ function CdnAssetInput({
   onFocus,
   onPaste,
   onUrlChange,
-  onError,
 }: CdnAssetInputProps) {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [isDragging, setIsDragging] = useState(false);
@@ -184,15 +116,7 @@ function CdnAssetInput({
 
   const handleFile = (file: File | undefined) => {
     if (!file) return;
-
-    const normalizedFile = normalizeAssetFile(file);
-
-    if (normalizedFile.size > MAX_CDN_ASSET_SIZE) {
-      onError("Asset must be 16MB or smaller");
-      return;
-    }
-
-    onAssetSelect(normalizedFile);
+    onAssetSelect(file);
   };
 
   const handleAssetButtonClick = () => {
@@ -216,7 +140,7 @@ function CdnAssetInput({
     event.preventDefault();
     setIsDragging(false);
 
-    const file = getDroppedFile(event.dataTransfer);
+    const file = event.dataTransfer.files?.[0];
     if (file) {
       handleFile(file);
       return;
@@ -263,7 +187,6 @@ function CdnAssetInput({
         ref={fileInputRef}
         type="file"
         className="sr-only"
-        accept="image/*,.heic,.heif,text/plain"
         onChange={(event) => handleFile(event.target.files?.[0])}
       />
 
@@ -784,7 +707,6 @@ export default function UrlInput() {
                 onAssetSelect={handleAssetSelect}
                 onAssetClear={handleAssetClear}
                 onPreviewOpen={() => setIsPreviewOpen(true)}
-                onError={setError}
               />
             ) : (
               <LinkUrlInput
