@@ -1,6 +1,9 @@
 import { clsx, type ClassValue } from "clsx";
 import { twMerge } from "tailwind-merge";
 
+const CANONICAL_DISPLAY_DOMAIN = "lnnk.click";
+const LEGACY_DISPLAY_DOMAIN = "lnk.pxxl.click";
+
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
@@ -25,14 +28,22 @@ export async function copyToClipboard(text: string): Promise<boolean> {
   }
 }
 
+function normalizeDisplayDomain(domain: string) {
+  const normalizedDomain = domain.replace(/^https?:\/\//, "").replace(/\/$/, "");
+
+  if (normalizedDomain === LEGACY_DISPLAY_DOMAIN) {
+    return CANONICAL_DISPLAY_DOMAIN;
+  }
+
+  return normalizedDomain;
+}
+
 export function getDisplayDomain() {
   if (typeof window !== "undefined") {
-    return window.location.host;
+    return normalizeDisplayDomain(window.location.host);
   }
-  return (
-    process.env.NEXT_PUBLIC_BASE_URL?.replace(/^https?:\/\//, "").replace(
-      /\/$/,
-      "",
-    ) || "lnnk.click"
+
+  return normalizeDisplayDomain(
+    process.env.NEXT_PUBLIC_BASE_URL || CANONICAL_DISPLAY_DOMAIN,
   );
 }
