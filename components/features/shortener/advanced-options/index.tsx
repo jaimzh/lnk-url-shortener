@@ -145,6 +145,7 @@ function CdnOptionsPanel({
                 randomPreview={randomPreview}
                 onRegenerate={onRegenerate}
                 displayPrefix="cdn.lnnk.click/"
+                showFlavorSelector={false}
               />
             ) : (
               <CustomStrategy
@@ -152,6 +153,7 @@ function CdnOptionsPanel({
                 setCustomAlias={setCustomAlias}
                 displayPrefix="cdn.lnnk.click/"
                 placeholder="custom-text"
+                allowDecorativeAliases={false}
               />
             )}
           </AnimatePresence>
@@ -518,3 +520,4 @@ export function AdvancedOptions({
     </div>
   );
 }
+

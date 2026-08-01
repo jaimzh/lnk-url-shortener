@@ -417,8 +417,9 @@ export default function UrlInput() {
   const [brandingImageUrl, setBrandingImageUrl] = useState("");
 
   const handleRegenerateRandom = useCallback(() => {
-    setRandomPreview(generateRandomAlias(randomFlavor));
-  }, [randomFlavor]);
+    const flavor = shortenerMode === SHORTENER_MODES.CDN ? "text" : randomFlavor;
+    setRandomPreview(generateRandomAlias(flavor));
+  }, [randomFlavor, shortenerMode]);
 
   React.useEffect(() => {
     if (aliasType === ALIAS_STRATEGIES.RANDOM) {
@@ -430,7 +431,8 @@ export default function UrlInput() {
       return customAlias.trim();
     }
 
-    return randomPreview || generateRandomAlias(randomFlavor);
+    const flavor = shortenerMode === SHORTENER_MODES.CDN ? "text" : randomFlavor;
+    return randomPreview || generateRandomAlias(flavor);
   };
 
   const inputRef = useRef<HTMLInputElement>(null);
@@ -770,3 +772,4 @@ export default function UrlInput() {
     </>
   );
 }
+

@@ -8,6 +8,7 @@ interface CustomStrategyProps {
   setCustomAlias: (alias: string) => void;
   displayPrefix?: string;
   placeholder?: string;
+  allowDecorativeAliases?: boolean;
 }
 
 export const CustomStrategy = ({
@@ -15,14 +16,13 @@ export const CustomStrategy = ({
   setCustomAlias,
   displayPrefix,
   placeholder = "custom-link",
+  allowDecorativeAliases = true,
 }: CustomStrategyProps) => {
   const [domain] = useState(() => getDisplayDomain());
-
-  const isValid =
-    !customAlias ||
-    /^[\w\-.\u{1F300}-\u{1F9FF}\u{1F600}-\u{1F64F}\u{1F680}-\u{1F6FF}\u{2600}-\u{26FF}\u{2700}-\u{27BF}]+$/u.test(
-      customAlias,
-    );
+  const aliasPattern = allowDecorativeAliases
+    ? /^[\w\-.\u{1F300}-\u{1F9FF}\u{1F600}-\u{1F64F}\u{1F680}-\u{1F6FF}\u{2600}-\u{26FF}\u{2700}-\u{27BF}]+$/u
+    : /^[\w\-.]+$/u;
+  const isValid = !customAlias || aliasPattern.test(customAlias);
 
   return (
     <motion.div
@@ -73,6 +73,7 @@ export const CustomStrategy = ({
             </span>
             {customAlias && (
               <button
+                type="button"
                 onClick={() => setCustomAlias("")}
                 className="p-2 -mr-2 text-text-muted/50 hover:text-destructive transition-colors cursor-pointer shrink-0"
               >
@@ -90,9 +91,14 @@ export const CustomStrategy = ({
         )}
       >
         {!isValid
-          ? "Use only letters, numbers, dashes, or emojis"
-          : "Valid: a-z, 0-9, dash, emojis."}
+          ? allowDecorativeAliases
+            ? "Use only letters, numbers, dashes, or emojis"
+            : "Use only letters, numbers, dashes, underscores, or dots"
+          : allowDecorativeAliases
+            ? "Valid: a-z, 0-9, dash, emojis."
+            : "Valid: a-z, 0-9, dash, underscore, dot."}
       </p>
     </motion.div>
   );
 };
+
