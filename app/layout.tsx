@@ -12,9 +12,9 @@ const ubuntu = Ubuntu({
 });
 
 const SITE_INFO = {
-  title: "LNNK | Professional URL Shortener & Link Management",
+  title: "LNNK | Custom URL Shortener & CDN Link Hosting",
   description:
-    "Create short, branded, and secure links with LNNK. A minimal professional URL shortener for individuals and businesses. Track clicks, manage links, and grow your reach.",
+    "Create custom short links and fast CDN asset links with LNNK. Shorten URLs, host shareable files, track clicks, and manage branded links.",
   url: "https://lnnk.click",
   image: "https://lnnk.click/lnnk-wide.png",
 };
@@ -28,9 +28,19 @@ export const metadata: Metadata = {
   keywords: [
     "URL shortener",
     "link shortener",
+    "custom URL shortener",
     "branded links",
+    "custom short links",
+    "CDN",
+    "custom CDN",
+    "CDN link hosting",
+    "CDN file hosting",
+    "asset CDN links",
+    "image CDN links",
+    "file sharing links",
     "LNNK",
     "lnnk.click",
+    "cdn.lnnk.click",
     "short links",
     "link management",
     "marketing tools",
@@ -66,7 +76,7 @@ export const metadata: Metadata = {
         url: SITE_INFO.image,
         width: 1200,
         height: 630,
-        alt: "LNNK - Professional Link Shortener",
+        alt: "LNNK custom URL shortener and CDN link hosting",
       },
     ],
     locale: "en_US",
@@ -77,7 +87,6 @@ export const metadata: Metadata = {
     title: SITE_INFO.title,
     description: SITE_INFO.description,
     images: [SITE_INFO.image],
-    // creator: "@lnnk_click",
   },
   robots: {
     index: true,
@@ -112,3 +121,4 @@ export default function RootLayout({
     </html>
   );
 }
+

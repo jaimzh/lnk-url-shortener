@@ -3,24 +3,57 @@ import { getBaseUrl } from "@/lib/server-utils";
 
 export default async function StructuredData() {
   const baseUrl = await getBaseUrl();
+
   const structuredData = {
     "@context": "https://schema.org",
-    "@type": "WebApplication",
-    name: "LNNK",
-    url: baseUrl,
-    description:
-      "Create short, branded, and secure links with LNNK. Professional URL shortener with analytics and custom domains.",
-    applicationCategory: "MultimediaApplication",
-    operatingSystem: "All",
-    offers: {
-      "@type": "Offer",
-      price: "0",
-      priceCurrency: "USD",
-    },
-    author: {
-      "@type": "Organization",
-      name: "LNNK",
-    },
+    "@graph": [
+      {
+        "@type": "Organization",
+        "@id": `${baseUrl}/#organization`,
+        name: "LNNK",
+        url: baseUrl,
+        logo: `${baseUrl}/android-chrome-512x512.png`,
+      },
+      {
+        "@type": "WebSite",
+        "@id": `${baseUrl}/#website`,
+        name: "LNNK",
+        url: baseUrl,
+        description:
+          "LNNK helps people create custom short links and CDN asset links for sharing URLs, images, files, and other web assets.",
+        publisher: {
+          "@id": `${baseUrl}/#organization`,
+        },
+        inLanguage: "en-US",
+      },
+      {
+        "@type": "WebApplication",
+        "@id": `${baseUrl}/#app`,
+        name: "LNNK",
+        url: baseUrl,
+        description:
+          "A custom URL shortener and CDN link hosting tool for branded links, shareable file links, click tracking, QR codes, and asset delivery.",
+        applicationCategory: "UtilitiesApplication",
+        operatingSystem: "All",
+        browserRequirements: "Requires JavaScript. Works in modern browsers.",
+        featureList: [
+          "Custom URL shortening",
+          "Branded short links",
+          "CDN asset links for files and images",
+          "Click tracking",
+          "QR code generation",
+          "Configurable cache and expiry controls",
+        ],
+        offers: {
+          "@type": "Offer",
+          price: "0",
+          priceCurrency: "USD",
+        },
+        creator: {
+          "@id": `${baseUrl}/#organization`,
+        },
+      },
+    ],
   };
 
   return (
@@ -30,3 +63,4 @@ export default async function StructuredData() {
     />
   );
 }
+

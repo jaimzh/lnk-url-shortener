@@ -6,9 +6,9 @@ import fs from "fs/promises";
 import { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "How It Works",
+  title: "How LNNK Short Links and CDN Links Work",
   description:
-    "Learn how LNNK shortens your URLs, ensures security, and provides lightning-fast redirection.",
+    "Learn how LNNK creates custom short URLs, CDN asset links, secure redirects, QR codes, and trackable sharing links.",
 };
 
 export default async function HowItWorks() {
@@ -31,3 +31,4 @@ export default async function HowItWorks() {
     </main>
   );
 }
+

@@ -2,9 +2,9 @@ import { MetadataRoute } from "next";
 
 export default function manifest(): MetadataRoute.Manifest {
   return {
-    name: "LNNK - Professional URL Shortener",
+    name: "LNNK - Custom URL Shortener & CDN Links",
     short_name: "LNNK",
-    description: "Create short, branded, and secure links with LNNK.",
+    description: "Create custom short links and fast CDN asset links with LNNK.",
     start_url: "/",
     display: "standalone",
     background_color: "#000000",
@@ -43,7 +43,4 @@ export default function manifest(): MetadataRoute.Manifest {
     ],
   };
 }
-
-
-
 
