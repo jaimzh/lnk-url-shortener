@@ -6,7 +6,8 @@ export const urlSchema = z.object({
     .trim()
     .min(1, "URL is required")
     .regex(
-      /^(https?:\/\/)?([\w.-]+\.[a-z]{2,})(\/.*)?$/i,
+      /^(https?:\/\/)?(([\w-]+\.)+[\w-]+|localhost|\d{1,3}(\.\d{1,3}){3})(:\d+)?(\/.*)?$/i,
+      // /^(https?:\/\/)?([\w.-]+\.[a-z]{2,})(\/.*)?$/i,
       "Please enter a valid link (e.g., google.com or https://example.com)",
     )
     .transform((url) => {
